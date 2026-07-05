@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IS_DEMO, CLONE_URL } from "@/lib/stage";
 
 const features = [
   {
@@ -29,17 +30,28 @@ export default function Home() {
           Next.js + Convex, wired and ready. Set 4 env vars, deploy to Vercel, ship.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
+          {IS_DEMO ? (
+            <a
+              href={CLONE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
+            >
+              Clone this project ↗
+            </a>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
+            >
+              Get started
+            </Link>
+          )}
           <Link
-            href="/login"
-            className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
-          >
-            Get started
-          </Link>
-          <Link
-            href="/dashboard"
+            href={IS_DEMO ? "/login" : "/dashboard"}
             className="rounded-lg px-5 py-2.5 text-sm font-medium text-neutral-600 transition hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
           >
-            Go to dashboard →
+            {IS_DEMO ? "Try the demo →" : "Go to dashboard →"}
           </Link>
         </div>
       </section>
