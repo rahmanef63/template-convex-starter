@@ -2,6 +2,8 @@
 
 Minimal **Convex + Next.js 16** starter. Deploy to Vercel; Convex auto-deploys on every build. **You only set 4 env vars.**
 
+**Live demo:** https://template-convex-starter.vercel.app
+
 ## The 4 variables
 
 | Your term    | Env var                  | Where             | e.g.                          |
