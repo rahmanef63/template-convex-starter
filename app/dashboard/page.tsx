@@ -65,7 +65,15 @@ function Notes() {
             {me?.email ? `Signed in as ${me.email}` : "…"}
           </p>
         </div>
-        <SignOutButton />
+        <div className="flex items-center gap-3">
+          <Link
+            href="/assistant"
+            className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:text-neutral-900 dark:border-neutral-800 dark:text-neutral-300 dark:hover:text-white"
+          >
+            Assistant
+          </Link>
+          <SignOutButton />
+        </div>
       </header>
 
       <form onSubmit={submit} className="mt-8 flex gap-2">

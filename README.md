@@ -38,5 +38,25 @@ Sign up on `/login` to create your account.
 - `/` — landing page
 - `/login` — auth (sign up / sign in)
 - `/dashboard` — your notes, live via Convex
+- `/assistant` — Claude-powered AI chat (Vercel AI SDK). Optional — set `ANTHROPIC_API_KEY` to turn it on.
 
-Auth is [`@convex-dev/auth`](https://labs.convex.dev/auth) Password provider (open signup). Data is a `notes` table, per-user, with server-side ownership checks on every mutation.
+Auth is [`@convex-dev/auth`](https://labs.convex.dev/auth) Password provider (open signup). Data is a `notes` table, per-user, with server-side ownership checks on every mutation. The AI route lives in `app/api/chat/route.ts` (Claude via `@ai-sdk/anthropic`).
+
+## Vibe-coding guardrails (built in)
+
+This is a **blank canvas you build on with an AI coding tool** — so it ships with
+guardrails that keep AI-assisted code clean (no slop, no DRY/SSOT violations, no
+spaghetti), even if you've never coded before:
+
+- **`AGENTS.md`** — the single source of truth for how any AI tool (Cursor, Claude
+  Code, Copilot, Windsurf) should build here: architecture map, the laziness ladder
+  (YAGNI), DRY/SSOT rules, Convex security rules (auth on every mutation, index
+  don't scan), no-AI-slop frontend rules, and the add-a-feature golden path.
+- **`CLAUDE.md`** and **`.cursor/rules/`** just point at `AGENTS.md` — one source,
+  no drift.
+- **`.claude/skills/add-feature`** — a Claude Code skill that walks the clean
+  schema → validated+authz'd function → typed UI path when you ask it to add a feature.
+
+Just open the repo in your AI tool and start describing what you want — it reads
+these rules automatically. For extra guardrails in Claude Code, install the
+[ponytail](https://github.com/) (laziness/YAGNI) and taste (anti-slop UI) plugins.
