@@ -1,0 +1,14 @@
+node_modules
+.next
+.turbo
+out
+dist
+.env*.local
+.env
+*.tsbuildinfo
+next-env.d.ts
+# Convex Cloud target: `convex deploy` regenerates _generated on every build,
+# so it's not committed. (Self-hosted/Docker? Commit it instead + drop this line.)
+convex/_generated
+.vercel
+.DS_Store
