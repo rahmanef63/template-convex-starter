@@ -7,8 +7,10 @@ dist
 .env
 *.tsbuildinfo
 next-env.d.ts
-# Convex Cloud target: `convex deploy` regenerates _generated on every build,
-# so it's not committed. (Self-hosted/Docker? Commit it instead + drop this line.)
-convex/_generated
+# convex/_generated IS committed: `convex deploy --cmd 'next build'` pushes the
+# backend but does not write _generated to disk before the build runs, so the
+# committed copy is what `next build` resolves `@/convex/_generated/*` against.
+# `npx convex dev` / `codegen` refresh it locally; commit the change when schema
+# or functions move.
 .vercel
 .DS_Store
