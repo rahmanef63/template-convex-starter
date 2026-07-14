@@ -113,6 +113,35 @@ Three steps, in order, every time:
 Then verify it actually works (drive the flow in the browser), not just that it
 typechecks. See `README.md` → Local dev.
 
+## Merging an ongoing project (`src/` → this starter)
+
+You can start from an existing app instead of a blank page. The user drops their
+project into `src/` (a quarantined staging area — the build never imports it) and
+asks you to **weave it in** (`/weave-src`). Don't copy-paste it wholesale; absorb
+it one feature at a time so the result is this starter's golden path, not the old
+code's shape.
+
+1. **Inventory `src/` and report back.** Identify the stack (framework, data
+   layer, auth, styling, env/secrets) and list the routes, data models, and
+   external calls before changing anything.
+2. **Map each concern to the SSOT** (rewrite the plumbing, don't port it):
+   - Pages/routes → `app/**`; interactive parts → `"use client"`.
+   - Data models / DB / ORM / REST → `convex/schema.ts` + `convex/<feature>.ts`
+     (validated args, `requireUser`, `.withIndex`) — external calls become Convex
+     functions the client calls with `useQuery`/`useMutation`.
+   - Any auth (JWT, sessions, NextAuth, Clerk, custom) → `@convex-dev/auth`.
+   - CSS framework → Tailwind v4 + `app/globals.css`; port the design *tokens*.
+   - Secrets → `.env.example` + server routes. Never `NEXT_PUBLIC_` a secret.
+   - LLM/AI calls → `app/api/chat/route.ts` via `@ai-sdk/anthropic`.
+3. **Absorb one feature at a time** with the `add-feature` recipe (schema →
+   authz'd function → typed UI). Verify in the browser, then delete that slice
+   from `src/`.
+4. **Delete `src/` when empty.** Nothing that ships imports from it.
+
+Everything absorbed obeys the rules above — auth + ownership on every mutation,
+index-don't-scan, one SSOT per fact, ≤200-line files, no slop. Drop features the
+old app carried that the user doesn't actually need.
+
 ## AI (Vercel AI SDK)
 
 - The assistant lives in `app/api/chat/route.ts` (server, holds the key) + a
