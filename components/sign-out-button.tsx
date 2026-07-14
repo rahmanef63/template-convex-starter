@@ -12,7 +12,7 @@ export function SignOutButton() {
         await signOut();
         router.push("/");
       }}
-      className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:text-neutral-900 dark:border-neutral-800 dark:text-neutral-300 dark:hover:text-white"
+      className="btn-ghost"
     >
       Sign out
     </button>

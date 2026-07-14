@@ -20,50 +20,45 @@ export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-20">
       <section>
-        <span className="inline-block rounded-full border border-neutral-200 px-3 py-1 text-xs font-medium text-neutral-500 dark:border-neutral-800">
+        <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/[0.06] px-3 py-1 text-xs font-medium text-accent">
+          <span className="size-1.5 rounded-full bg-accent" />
           Next.js 16 + Convex
         </span>
         <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
-          Convex Starter
+          Full-stack,
+          <br />
+          already wired.
         </h1>
-        <p className="mt-4 max-w-xl text-lg text-neutral-600 dark:text-neutral-400">
-          Next.js + Convex, wired and ready. Set 4 env vars, deploy to Vercel, ship.
+        <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+          A starter with auth, live data, and deploy done for you. Set 4 env vars,
+          push, and ship — no backend to stand up.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           {IS_DEMO ? (
-            <a
-              href={CLONE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
-            >
+            <a href={CLONE_URL} target="_blank" rel="noreferrer" className="btn-primary">
               Clone this project ↗
             </a>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
-            >
+            <Link href="/login" className="btn-primary">
               Get started
             </Link>
           )}
-          <Link
-            href={IS_DEMO ? "/login" : "/dashboard"}
-            className="rounded-lg px-5 py-2.5 text-sm font-medium text-neutral-600 transition hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
-          >
-            {IS_DEMO ? "Try the demo →" : "Go to dashboard →"}
+          <Link href={IS_DEMO ? "/login" : "/dashboard"} className="btn-ghost">
+            {IS_DEMO ? "Try the demo" : "Go to dashboard"}
           </Link>
         </div>
       </section>
 
-      <section className="mt-20 grid gap-4 sm:grid-cols-3">
-        {features.map((f) => (
-          <div
-            key={f.title}
-            className="rounded-xl border border-neutral-200 p-5 dark:border-neutral-800"
-          >
-            <h2 className="text-sm font-semibold">{f.title}</h2>
-            <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{f.body}</p>
+      <section className="card mt-16 divide-y divide-border">
+        {features.map((f, i) => (
+          <div key={f.title} className="flex items-start gap-5 p-5">
+            <span className="mt-0.5 font-mono text-xs tracking-widest text-accent">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">{f.title}</h2>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+            </div>
           </div>
         ))}
       </section>

@@ -16,18 +16,15 @@ export default function DashboardPage() {
   return (
     <main className="mx-auto min-h-screen max-w-xl px-6 py-16">
       <AuthLoading>
-        <p className="text-sm text-neutral-500">Loading…</p>
+        <p className="text-sm text-muted-foreground">Loading…</p>
       </AuthLoading>
 
       <Unauthenticated>
-        <div className="rounded-2xl border border-neutral-200 p-8 text-center dark:border-neutral-800">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <div className="card p-8 text-center">
+          <p className="text-sm text-muted-foreground">
             You need to sign in to view your notes.
           </p>
-          <Link
-            href="/login"
-            className="mt-4 inline-block rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
-          >
+          <Link href="/login" className="btn-primary mt-4">
             Sign in
           </Link>
         </div>
@@ -61,15 +58,12 @@ function Notes() {
       <header className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Your notes</h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-muted-foreground">
             {me?.email ? `Signed in as ${me.email}` : "…"}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            href="/assistant"
-            className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:text-neutral-900 dark:border-neutral-800 dark:text-neutral-300 dark:hover:text-white"
-          >
+          <Link href="/assistant" className="btn-ghost">
             Assistant
           </Link>
           <SignOutButton />
@@ -81,44 +75,41 @@ function Notes() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a note…"
-          className="w-full rounded-lg border border-neutral-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-400 dark:border-neutral-800 dark:focus:border-neutral-600"
+          className="field"
         />
-        <button
-          type="submit"
-          className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-neutral-900"
-        >
+        <button type="submit" className="btn-primary">
           Add
         </button>
       </form>
 
       <ul className="mt-6 space-y-2">
         {notes === undefined && (
-          <li className="text-sm text-neutral-500">Loading…</li>
+          <li className="text-sm text-muted-foreground">Loading…</li>
         )}
         {notes?.length === 0 && (
-          <li className="text-sm text-neutral-500">
+          <li className="text-sm text-muted-foreground">
             No notes yet. Add your first one above.
           </li>
         )}
         {notes?.map((n) => (
           <li
             key={n._id}
-            className="flex items-center gap-3 rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-800"
+            className="flex items-center gap-3 rounded-lg border border-border bg-card px-3 py-2"
           >
             <button
               onClick={() => toggle({ id: n._id })}
               aria-label={n.done ? "Mark not done" : "Mark done"}
-              className={`grid size-5 shrink-0 place-items-center rounded border text-xs ${
+              className={`grid size-5 shrink-0 place-items-center rounded border text-xs transition-colors ${
                 n.done
-                  ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900"
-                  : "border-neutral-300 dark:border-neutral-700"
+                  ? "border-accent bg-accent text-accent-foreground"
+                  : "border-border-hover"
               }`}
             >
               {n.done ? "✓" : ""}
             </button>
             <span
               className={`flex-1 text-sm ${
-                n.done ? "text-neutral-400 line-through" : ""
+                n.done ? "text-muted-foreground line-through" : "text-foreground"
               }`}
             >
               {n.text}
@@ -126,7 +117,7 @@ function Notes() {
             <button
               onClick={() => remove({ id: n._id })}
               aria-label="Delete note"
-              className="text-neutral-400 transition hover:text-red-600 dark:hover:text-red-400"
+              className="text-muted-foreground transition-colors hover:text-destructive"
             >
               ✕
             </button>

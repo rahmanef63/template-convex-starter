@@ -1,14 +1,47 @@
 @import "tailwindcss";
 
+/* Dark by default (not OS-dependent). One neutral system + a single warm accent
+   used sparingly — near-white primary actions keep it out of the blue/purple
+   AI-slop register. Tokens drive every surface; pages never hardcode a hex or a
+   `dark:` variant. Extend this, don't fight it. */
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --card: #141414;
+  --card-hover: #191919;
+  --foreground: #ededed;
+  --muted-foreground: #8f8f8f;
+  --border: #262626;
+  --border-hover: #3a3a3a;
+  --primary: #ededed;
+  --primary-foreground: #0a0a0a;
+  --accent: #f5b544; /* warm amber — eyebrow, focus, active states only */
+  --accent-foreground: #0a0a0a;
+  --ring: #f5b544;
+  --destructive: #f87171;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme inline {
+  --color-background: var(--background);
+  --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+}
+
+/* Default border color, in the base layer so `border-<token>` utilities
+   (@layer utilities) still win — an unlayered `*` rule would beat them. */
+@layer base {
+  * {
+    border-color: var(--border);
   }
 }
 
@@ -19,4 +52,33 @@ body {
     Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Visible keyboard focus — warm accent, offset so it clears the surface. */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Shared primitives — one home for the button/field/card so the pages stay DRY
+   and every surface looks like the same product. */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-border-hover hover:text-foreground;
+  }
+  .field {
+    @apply w-full rounded-lg border border-border bg-transparent px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border-hover;
+  }
+  .card {
+    @apply rounded-2xl border border-border bg-card;
+  }
 }

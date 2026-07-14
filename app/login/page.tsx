@@ -35,16 +35,13 @@ export default function LoginPage() {
     }
   }
 
-  const inputCls =
-    "w-full rounded-lg border border-neutral-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-400 dark:border-neutral-800 dark:focus:border-neutral-600";
-
   return (
     <main className="grid min-h-screen place-items-center px-6">
-      <div className="w-full max-w-sm rounded-2xl border border-neutral-200 p-7 dark:border-neutral-800">
+      <div className="card w-full max-w-sm p-7">
         <h1 className="text-xl font-semibold tracking-tight">
           {flow === "signIn" ? "Sign in" : "Create account"}
         </h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-muted-foreground">
           {flow === "signIn" ? "Welcome back." : "Sign up to get started."}
         </p>
         <form onSubmit={submit} className="mt-6 space-y-3">
@@ -54,7 +51,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className={inputCls}
+            className="field"
           />
           <input
             type="password"
@@ -62,14 +59,10 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className={inputCls}
+            className="field"
           />
-          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
-          >
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          <button type="submit" disabled={busy} className="btn-primary w-full">
             {busy ? "…" : flow === "signIn" ? "Sign in" : "Sign up"}
           </button>
         </form>
@@ -79,7 +72,7 @@ export default function LoginPage() {
             setFlow(flow === "signIn" ? "signUp" : "signIn");
             setError(null);
           }}
-          className="mt-4 text-xs text-neutral-500 underline-offset-4 hover:text-neutral-900 hover:underline dark:hover:text-white"
+          className="mt-4 text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
         >
           {flow === "signIn" ? "Need an account? Sign up" : "Have an account? Sign in"}
         </button>
