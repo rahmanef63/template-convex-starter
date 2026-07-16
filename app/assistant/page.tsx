@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useChat } from "ai/react";
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 
 // Demo AI chat wired to Claude via the Vercel AI SDK (see app/api/chat/route.ts).
@@ -43,8 +44,17 @@ export default function AssistantPage() {
 }
 
 function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
-    useChat();
+  const { messages, sendMessage, status, error } = useChat();
+  const [input, setInput] = useState("");
+  const busy = status === "submitted" || status === "streaming";
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text || busy) return;
+    setInput("");
+    void sendMessage({ text });
+  }
 
   return (
     <div className="mt-6 flex flex-1 flex-col">
@@ -59,7 +69,9 @@ function Chat() {
             <span className="mr-2 font-mono text-xs uppercase tracking-wide text-accent">
               {m.role === "user" ? "you" : "ai"}
             </span>
-            <span className="whitespace-pre-wrap text-foreground">{m.content}</span>
+            <span className="whitespace-pre-wrap text-foreground">
+              {m.parts.map((p) => (p.type === "text" ? p.text : "")).join("")}
+            </span>
           </div>
         ))}
         {error && (
@@ -70,15 +82,15 @@ function Chat() {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
+      <form onSubmit={submit} className="mt-6 flex gap-2">
         <input
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Message the assistant…"
           className="field"
         />
-        <button type="submit" disabled={isLoading || !input.trim()} className="btn-primary">
-          {isLoading ? "…" : "Send"}
+        <button type="submit" disabled={busy || !input.trim()} className="btn-primary">
+          {busy ? "…" : "Send"}
         </button>
       </form>
     </div>

@@ -1,5 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic";
-import { streamText, convertToCoreMessages } from "ai";
+import { convertToModelMessages, streamText, type UIMessage } from "ai";
 
 // The single knob for the AI tier. Swap for the model that fits your feature:
 //   claude-opus-4-8  — hardest reasoning (priciest)
@@ -20,15 +20,15 @@ export async function POST(req: Request) {
     );
   }
 
-  const { messages } = await req.json();
+  const { messages }: { messages: UIMessage[] } = await req.json();
   const result = streamText({
     model: anthropic(MODEL),
     system:
       "You are a concise, helpful assistant embedded in a Convex + Next.js starter app. Answer directly.",
-    messages: convertToCoreMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
-  // ponytail: this route is unauthenticated. Fine while /assistant is gated
-  // behind sign-in, but if you expose the chat publicly, verify the caller here
+  // NOTE: this route is unauthenticated. Fine while /assistant is gated behind
+  // sign-in, but if you expose the chat publicly, verify the caller here
   // (convexAuthNextjsToken) so visitors can't burn your API key.
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }

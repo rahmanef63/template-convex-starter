@@ -58,5 +58,4 @@ spaghetti), even if you've never coded before:
   schema → validated+authz'd function → typed UI path when you ask it to add a feature.
 
 Just open the repo in your AI tool and start describing what you want — it reads
-these rules automatically. For extra guardrails in Claude Code, install the
-[ponytail](https://github.com/) (laziness/YAGNI) and taste (anti-slop UI) plugins.
+these rules automatically.

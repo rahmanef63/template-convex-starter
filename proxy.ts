@@ -1,9 +1,9 @@
 // Next 16 proxy (renamed from middleware.ts).
-// Stub — extend with auth gate via convexAuthNextjsToken() when ready.
+// Stub — extend with auth gate via convexAuthNextjsToken() when ready; the
+// request arrives as the first argument (type NextRequest) when you need it.
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export function proxy(_req: NextRequest) {
+export function proxy() {
   return NextResponse.next();
 }
 

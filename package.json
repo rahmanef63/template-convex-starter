@@ -3,35 +3,42 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "dev": "next dev --turbo --port 3000",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "convex:dev": "convex dev",
-    "convex:codegen": "convex dev --once",
+    "convex:codegen": "convex codegen",
     "build:vercel": "convex deploy --cmd 'next build'",
     "build:auto": "if [ -n \"$CONVEX_DEPLOY_KEY\" ]; then node scripts/setup-auth.mjs && convex deploy --cmd 'next build'; elif [ -n \"$NEXT_PUBLIC_CONVEX_URL\" ]; then echo \"No CONVEX_DEPLOY_KEY — building frontend against existing NEXT_PUBLIC_CONVEX_URL (backend not redeployed).\" && next build; elif [ \"$VERCEL\" = \"1\" ]; then echo \"Missing CONVEX_DEPLOY_KEY and NEXT_PUBLIC_CONVEX_URL; set one in Vercel env.\" && exit 1; else next build; fi"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.2.12",
-    "@auth/core": "^0.37.0",
-    "@convex-dev/auth": "^0.0.84",
-    "ai": "^4.3.19",
-    "convex": "^1.40.0",
-    "next": "^16.2.7",
+    "@ai-sdk/anthropic": "^4.0.15",
+    "@ai-sdk/react": "^4.0.32",
+    "@auth/core": "^0.41.1",
+    "@convex-dev/auth": "^0.0.94",
+    "ai": "^7.0.29",
+    "convex": "^1.42.2",
+    "next": "^16.2.10",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.0",
-    "@types/node": "^22.10.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.13.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "jose": "^5.10.0",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.2.10",
+    "jose": "^6.2.3",
     "postcss": "^8.5.0",
-    "tailwindcss": "^4.3.0",
-    "typescript": "^5.7.0"
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
   }
 }

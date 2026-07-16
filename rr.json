@@ -5,7 +5,7 @@
   "style": "shadcn-new-york",
   "rsc": true,
   "tailwind": {
-    "config": "tailwind.config.ts",
+    "config": "",
     "css": "app/globals.css"
   },
   "aliases": {
