@@ -1,12 +1,13 @@
-# Lint + typecheck + build on every push/PR. No Convex credentials needed:
-# without CONVEX_DEPLOY_KEY the build falls back to a plain `next build`
-# against the committed convex/_generated (see package.json build:auto).
+# Lint + typecheck + test + build. Auto-triggers stripped (sc-git): CI runs
+# locally on every push via .git/hooks/pre-push, so this no longer burns cloud
+# Actions minutes. Kept runnable on demand from the Actions tab (workflow_dispatch)
+# and easy to restore — original push/PR triggers live in git history.
+# No Convex credentials needed: without CONVEX_DEPLOY_KEY the build falls back to
+# a plain `next build` against the committed convex/_generated (build:auto).
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   ci:

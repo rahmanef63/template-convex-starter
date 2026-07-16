@@ -14,3 +14,6 @@ next-env.d.ts
 # or functions move.
 .vercel
 .DS_Store
+
+# sc-git: local workflow backups (see git history for originals)
+*.yml.bak
