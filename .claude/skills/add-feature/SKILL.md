@@ -68,7 +68,13 @@ export const remove = mutation({
 Non-negotiable: **auth on every mutation, ownership check on every edit, index on
 every read.** Never `.filter()` a growing table.
 
-## 3. UI (typed, live, gated)
+## 3. Tests (prove the rules hold)
+
+Copy the shape of `tests/notes.test.ts`: unauthenticated callers rejected, users
+can't see each other's rows, only the owner can mutate. `npm test` runs offline
+(Vitest + convex-test) — no deployment needed.
+
+## 4. UI (typed, live, gated)
 
 A page/component that reads with `useQuery` and writes with `useMutation`. Types
 come from the generated `api` — don't hand-write them:
@@ -84,10 +90,12 @@ export default function Page() {
 }
 ```
 
-Handle `data === undefined` (loading) and empty states. Use native elements +
-Tailwind; don't pull a UI-kit dep for one control.
+Handle `data === undefined` (loading — use `<Skeleton>` from
+`components/skeleton.tsx`) and empty states. Surface mutation failures with
+`useToast()` + `errorMessage()` (`components/toast.tsx`, `lib/errors.ts`). Use
+native elements + Tailwind; don't pull a UI-kit dep for one control.
 
-## 4. Verify
+## 5. Verify
 
 Run it: `npx convex dev` (one terminal) + `npm run dev` (another), then drive the
 feature in the browser. Typecheck is not proof it works.

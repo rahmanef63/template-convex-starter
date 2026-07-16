@@ -1,0 +1,15 @@
+# Weekly dependency PRs, grouped so updates arrive as one reviewable PR per
+# ecosystem instead of a flood. CI (lint + typecheck + test + build) gates them.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
