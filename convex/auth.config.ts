@@ -1,4 +1,4 @@
-export default {
+const authConfig = {
   providers: [
     {
       // JWKS served at <deployment>.convex.site/.well-known/jwks.json
@@ -7,3 +7,5 @@ export default {
     },
   ],
 };
+
+export default authConfig;

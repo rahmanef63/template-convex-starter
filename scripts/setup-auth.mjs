@@ -9,7 +9,7 @@
 // dump it into the build log). Permission failures (403
 // WriteEnvironmentVariables — deploy key isn't a production key, or its
 // creator isn't a Convex admin/Project Admin) do NOT fail the build: the site
-// goes live and /setup walks the owner through fixing the key.
+// goes live and the build log explains how to fix the key.
 import { execFileSync } from "node:child_process";
 
 if (!process.env.CONVEX_DEPLOY_KEY) {
@@ -44,7 +44,7 @@ function envSet(pair, label) {
     const out = `${e.stdout || ""}${e.stderr || ""}`;
     const denied = /403|Unauthorized|WriteEnvironmentVariables/i.test(out);
     console.error(
-      `[setup-auth] ✖ gagal set ${label}${denied ? " — deploy key tidak punya izin tulis env (WriteEnvironmentVariables)" : ""}`,
+      `[setup-auth] ✖ failed to set ${label}${denied ? " — deploy key lacks env write permission (WriteEnvironmentVariables)" : ""}`,
     );
     const firstLines = out.trim().split("\n").slice(0, 2).join("\n");
     if (firstLines) console.error(firstLines);
@@ -89,16 +89,15 @@ if (ok && site) envSet(`SITE_URL=${site}`, "SITE_URL"); // non-critical
 if (!ok) {
   console.error(`
 [setup-auth] ──────────────────────────────────────────────────────────
-  Kunci login TIDAK terpasang. Penyebab paling umum:
-   1. Deploy key kamu tidak mencentang capability env — di UI deploy key
-      Convex terbaru, pastikan key punya: deployment:deploy +
-      deployment:env:view + deployment:env:write (atau pilih full access).
-      Generate: dashboard.convex.dev → project → Production → Settings →
-      Deploy Keys.
-   2. Akun pembuat key bukan admin / Project Admin di team Convex itu.
-  Build TETAP dilanjutkan — situs akan live, tapi daftar/login owner
-  gagal sampai key diganti di Vercel lalu Redeploy.
-  Buka /setup di situsmu — halaman itu memandu langkah perbaikannya.
+  Auth keys were NOT provisioned. Most common causes:
+   1. Your deploy key is missing the env capabilities — in the Convex
+      deploy-key UI make sure the key has: deployment:deploy +
+      deployment:env:view + deployment:env:write (or pick full access).
+      Generate one: dashboard.convex.dev → project → Production →
+      Settings → Deploy Keys.
+   2. The key's creator isn't an admin / Project Admin on that Convex team.
+  The build CONTINUES — the site goes live, but owner sign-up/sign-in
+  will fail until you replace CONVEX_DEPLOY_KEY in Vercel and Redeploy.
 ──────────────────────────────────────────────────────────────────────`);
   process.exit(0);
 }

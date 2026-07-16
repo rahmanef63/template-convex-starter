@@ -12,10 +12,21 @@
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient, ConvexProvider } from "convex/react";
 import { ConvexHttpClient } from "convex/browser";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, useSyncExternalStore, type ReactNode } from "react";
+
+// Hydration detector: false during SSR/prerender, true after the client
+// mounts. useSyncExternalStore avoids the setState-in-effect cascade.
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [convex] = useState(() => {
     // Always construct a client so `useQuery` ALWAYS has a ConvexProvider above
     // it and can never throw "Could not find Convex client". If the env var is
@@ -34,7 +45,6 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
     return client;
   });
 
-  useEffect(() => setMounted(true), []);
   // ConvexAuthProvider nests client-side only (it errors during static
   // prerender). Until then, render nothing so auth hooks never run outside the
   // auth-aware provider.

@@ -1,0 +1,23 @@
+# Lint + typecheck + build on every push/PR. No Convex credentials needed:
+# without CONVEX_DEPLOY_KEY the build falls back to a plain `next build`
+# against the committed convex/_generated (see package.json build:auto).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
