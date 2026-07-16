@@ -18,10 +18,19 @@ Set **cloud** + **deploy key** yourself in Vercel. **site** + **domain** are aut
 ## Deploy to Vercel
 
 1. **Push this repo** to GitHub and import it into Vercel.
-2. **Set the Build Command** to `npm run build:auto`. This runs `scripts/setup-auth.mjs` then `convex deploy --cmd 'next build'` — it pushes your Convex functions + schema, auto-provisions the auth keys, then builds Next.js injecting `NEXT_PUBLIC_CONVEX_URL`.
+2. **Set the Build Command** to `npm run build:auto`. This runs `scripts/build.mjs` — it provisions the auth keys (`scripts/setup-auth.mjs`), then `convex deploy --cmd 'next build'` pushes your Convex functions + schema and builds Next.js injecting `NEXT_PUBLIC_CONVEX_URL`.
 3. **Set env vars** `NEXT_PUBLIC_CONVEX_URL` + `CONVEX_DEPLOY_KEY`, then deploy.
 
-Every git push redeploys both Convex and the frontend.
+Every git push to your production branch redeploys both Convex and the frontend.
+
+### Preview deploys (PRs)
+
+A PR preview build with a **production** deploy key never runs `convex deploy` —
+`scripts/build.mjs` detects `VERCEL_ENV=preview` and builds the frontend only, so
+PR code can't overwrite your production backend. To get a real isolated backend
+per PR, create a **preview deploy key** (starts with `preview:`) in the Convex
+dashboard and set it as `CONVEX_DEPLOY_KEY` for Vercel's *Preview* environment
+only.
 
 ## Local dev
 
@@ -29,6 +38,7 @@ Every git push redeploys both Convex and the frontend.
 npm install
 npx convex dev   # terminal 1 — prompts to create/link a deployment, writes NEXT_PUBLIC_CONVEX_URL
 npm run dev      # terminal 2 — http://localhost:3000
+npm test         # backend tests (Vitest + convex-test, no deployment needed)
 ```
 
 Sign up on `/login` to create your account.
@@ -38,9 +48,9 @@ Sign up on `/login` to create your account.
 - `/` — landing page
 - `/login` — auth (sign up / sign in)
 - `/dashboard` — your notes, live via Convex
-- `/assistant` — Claude-powered AI chat (Vercel AI SDK). Optional — set `ANTHROPIC_API_KEY` to turn it on.
+- `/assistant` — Claude-powered AI chat (Vercel AI SDK). Optional — set `ANTHROPIC_API_KEY` to turn it on. Sign-in required; the route verifies the caller's Convex auth token so strangers can't spend your API key.
 
-Auth is [`@convex-dev/auth`](https://labs.convex.dev/auth) Password provider (open signup). Data is a `notes` table, per-user, with server-side ownership checks on every mutation. The AI route lives in `app/api/chat/route.ts` (Claude via `@ai-sdk/anthropic`).
+Auth is [`@convex-dev/auth`](https://labs.convex.dev/auth) Password provider (open signup). Data is a `notes` table, per-user, with server-side ownership checks on every mutation — and `tests/notes.test.ts` proves those checks hold. The AI route lives in `app/api/chat/route.ts` (Claude via `@ai-sdk/anthropic`). Error/loading UX is built in: global error boundary, 404, loading skeletons (`components/skeleton.tsx`), and toasts (`components/toast.tsx`). CI runs lint + typecheck + tests + build on every push; Dependabot keeps deps fresh.
 
 ## Vibe-coding guardrails (built in)
 

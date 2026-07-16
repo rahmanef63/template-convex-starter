@@ -33,8 +33,10 @@ Next.js 16 (App Router) + React 19 + **Convex** (reactive backend + DB) +
 | Backend logic | `convex/*.ts` (queries/mutations) | the frontend (don't reimplement) |
 | Auth check | `convex/_shared/auth.ts` (`requireUser`) | inline `getAuthUserId` copies |
 | Routes / pages | `app/**` | — |
-| Shared UI | `components/**` | copy-pasted JSX |
-| Env / deploy | `.env.example` + `package.json` `build:auto` | — |
+| Shared UI | `components/**` (incl. `toast.tsx`, `skeleton.tsx`) | copy-pasted JSX |
+| Mutation error UX | `useToast()` + `lib/errors.ts` (`errorMessage`) | ad-hoc alert/console |
+| Backend tests | `tests/*.test.ts` (Vitest + convex-test) | — |
+| Env / deploy | `.env.example` + `scripts/build.mjs` (`build:auto`) | — |
 
 `convex/_generated/` is auto-generated (committed so Vercel can typecheck). Never
 edit it by hand; it refreshes on `npx convex dev` / `deploy`.
@@ -101,14 +103,19 @@ The look should feel intentional, not templated. Avoid the generic-AI tells:
 
 ## Adding a feature (the golden path)
 
-Three steps, in order, every time:
+Four steps, in order, every time:
 
 1. **Schema** — add the table/field + its index in `convex/schema.ts`.
 2. **Functions** — `query` to read (auth + `.withIndex`), `mutation` to write
    (auth + ownership + validated args) in a new `convex/<feature>.ts`. Copy the
    shape of `convex/notes.ts`.
-3. **UI** — a page/component using `useQuery(api.<feature>.list)` /
-   `useMutation(...)`. Gate private data behind `<Authenticated>`.
+3. **Tests** — prove auth + ownership hold: copy `tests/notes.test.ts`
+   (unauthenticated rejected, users isolated, only the owner mutates). `npm test`
+   runs offline, no deployment needed.
+4. **UI** — a page/component using `useQuery(api.<feature>.list)` /
+   `useMutation(...)`. Gate private data behind `<Authenticated>`, show loading
+   with `<Skeleton>`, surface mutation failures with `useToast()` +
+   `errorMessage()`.
 
 Then verify it actually works (drive the flow in the browser), not just that it
 typechecks. See `README.md` → Local dev.
