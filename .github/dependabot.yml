@@ -1,5 +1,6 @@
-# Weekly dependency PRs, grouped so updates arrive as one reviewable PR per
-# ecosystem instead of a flood. CI (lint + typecheck + test + build) gates them.
+# Weekly dependency PRs, grouped so updates arrive as one reviewable PR instead
+# of a flood. This template deploys Vercel-only (no GitHub Actions) — each PR is
+# validated by its Vercel preview build.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -9,7 +10,3 @@ updates:
     groups:
       npm-dependencies:
         patterns: ["*"]
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly

@@ -50,7 +50,7 @@ Sign up on `/login` to create your account.
 - `/dashboard` — your notes, live via Convex
 - `/assistant` — Claude-powered AI chat (Vercel AI SDK). Optional — set `ANTHROPIC_API_KEY` to turn it on. Sign-in required; the route verifies the caller's Convex auth token so strangers can't spend your API key.
 
-Auth is [`@convex-dev/auth`](https://labs.convex.dev/auth) Password provider (open signup). Data is a `notes` table, per-user, with server-side ownership checks on every mutation — and `tests/notes.test.ts` proves those checks hold. The AI route lives in `app/api/chat/route.ts` (Claude via `@ai-sdk/anthropic`). Error/loading UX is built in: global error boundary, 404, loading skeletons (`components/skeleton.tsx`), and toasts (`components/toast.tsx`). CI runs lint + typecheck + tests + build on every push; Dependabot keeps deps fresh.
+Auth is [`@convex-dev/auth`](https://labs.convex.dev/auth) Password provider (open signup). Data is a `notes` table, per-user, with server-side ownership checks on every mutation — and `tests/notes.test.ts` proves those checks hold. The AI route lives in `app/api/chat/route.ts` (Claude via `@ai-sdk/anthropic`). Error/loading UX is built in: global error boundary, 404, loading skeletons (`components/skeleton.tsx`), and toasts (`components/toast.tsx`). Deploy is Vercel-only: every push to your production branch triggers a Vercel build that deploys Convex + builds Next together (`build:auto`), and `next build` type-checks + lints — no separate CI service. Run `npm test` locally. Dependabot keeps deps fresh.
 
 ## Vibe-coding guardrails (built in)
 
