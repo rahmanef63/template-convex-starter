@@ -8,9 +8,7 @@
 // useQuery data as you build each feature out.
 import { useState } from "react";
 import {
-  PROJECT_FEATURES,
-  SYSTEM_FEATURES,
-  MENU_BY_SLUG,
+  menuForWorkspace,
   WORKSPACES,
   FAB,
   type MenuItem,
@@ -25,12 +23,24 @@ import { NavUser } from "@/components/os/nav-user";
 import { cn } from "@/lib/cn";
 
 export function OsShell() {
-  const [active, setActive] = useState(PROJECT_FEATURES[0]?.slug ?? FAB.slug);
+  const [workspaceId, setWorkspaceId] = useState(WORKSPACES[0]?.id ?? "");
+  const menu = menuForWorkspace(workspaceId);
+  const [active, setActive] = useState(menu.project[0]?.slug ?? FAB.slug);
   const [moreOpen, setMoreOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [workspaceId, setWorkspaceId] = useState(WORKSPACES[0]?.id ?? "");
-  const app = MENU_BY_SLUG[active] ?? FAB;
+  const app = menu.bySlug[active] ?? FAB;
   const isSystem = app.group === "system";
+
+  // Switching workspace swaps the whole menu. Keep the active feature only if the
+  // new workspace still has it (or it's the shared Assistant) — else land on its
+  // first feature so the content never points at a feature this workspace lacks.
+  function selectWorkspace(id: string) {
+    setWorkspaceId(id);
+    const next = menuForWorkspace(id);
+    setActive((cur) =>
+      cur === FAB.slug || cur in next.bySlug ? cur : next.project[0]?.slug ?? FAB.slug,
+    );
+  }
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
@@ -40,10 +50,10 @@ export function OsShell() {
           collapsed ? "md:hidden" : "md:flex",
         )}
       >
-        <WorkspaceSwitcher activeId={workspaceId} onChange={setWorkspaceId} />
+        <WorkspaceSwitcher activeId={workspaceId} onChange={selectWorkspace} />
         <nav aria-label="Features" className="mt-5 flex flex-1 flex-col gap-5">
-          <NavGroup label="Project" items={PROJECT_FEATURES} active={active} onSelect={setActive} />
-          <NavGroup label="System" items={SYSTEM_FEATURES} active={active} onSelect={setActive} />
+          <NavGroup label="Project" items={menu.project} active={active} onSelect={setActive} />
+          <NavGroup label="System" items={menu.system} active={active} onSelect={setActive} />
         </nav>
         <div className="mt-4 border-t border-border pt-3">
           <NavUser />
@@ -70,8 +80,20 @@ export function OsShell() {
         <div className="h-[calc(6rem+env(safe-area-inset-bottom))] md:hidden" />
       </main>
 
-      <OsDock active={active} onSelect={setActive} onOpenMore={() => setMoreOpen(true)} />
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} active={active} onSelect={setActive} />
+      <OsDock
+        projectFeatures={menu.project}
+        active={active}
+        onSelect={setActive}
+        onOpenMore={() => setMoreOpen(true)}
+      />
+      <MoreSheet
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        project={menu.project}
+        system={menu.system}
+        active={active}
+        onSelect={setActive}
+      />
     </div>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 // Sidebar HEADER — replaces the old "STARTER OS" brand link. A workspace picker
-// over the shared Dropdown (opens downward). Controlled: the shell owns the
-// active id and passes onChange. Switching is COSMETIC for now (see the SEAM in
-// menu.ts) — it just re-points the active id, it does not swap the nav menu.
+// over the shared Dropdown (opens downward). Controlled: the shell owns the active
+// id and, on change, swaps the whole menu for that workspace (menuForWorkspace in
+// menu.ts) — the sidebar nav, dock, breadcrumb, and content all follow.
 import { WORKSPACES } from "./menu";
 import { Icon } from "./icons";
 import { Dropdown, DropdownItem, DropdownDivider } from "./dropdown";

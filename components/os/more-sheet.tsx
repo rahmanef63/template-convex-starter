@@ -1,23 +1,27 @@
 "use client";
 
 // Mobile "all apps" bottom sheet (hidden on md+). Placeholder overlay drawer:
-// a scrim + a slide-up panel with an app grid, all from the MENU SSOT. No modal
+// a scrim + a slide-up panel gridding the active workspace's features. No modal
 // library — a fixed overlay with the modal basics done by hand: Escape-to-close,
 // body scroll lock, and real focus management (focus in on open, trap Tab within
 // the dialog, restore to the trigger on close) so aria-modal is an honest claim.
 import { useEffect, useRef } from "react";
-import { PROJECT_FEATURES, SYSTEM_FEATURES, type MenuItem } from "./menu";
+import { type MenuItem } from "./menu";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 
 export function MoreSheet({
   open,
   onClose,
+  project,
+  system,
   active,
   onSelect,
 }: {
   open: boolean;
   onClose: () => void;
+  project: MenuItem[];
+  system: MenuItem[];
   active: string;
   onSelect: (slug: string) => void;
 }) {
@@ -89,8 +93,8 @@ export function MoreSheet({
           <p className="text-sm text-muted-foreground">Placeholder — project features + system.</p>
         </div>
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 pb-2">
-          <SheetGroup label="Project" items={PROJECT_FEATURES} active={active} onSelect={pick} />
-          <SheetGroup label="System" items={SYSTEM_FEATURES} active={active} onSelect={pick} />
+          <SheetGroup label="Project" items={project} active={active} onSelect={pick} />
+          <SheetGroup label="System" items={system} active={active} onSelect={pick} />
         </div>
       </div>
     </div>

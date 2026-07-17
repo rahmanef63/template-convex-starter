@@ -1,12 +1,8 @@
-// SSOT for the OS shell's features. BOTH the desktop sidebar (app/os/os-shell.tsx)
-// and the mobile dock/sheet render from this one array. `icon` keys into
-// components/os/icons.tsx. Two kinds of feature, so the demo shows the difference:
-//
-//   group: "project"  — your app's own features. Render the DashboardScreen.
-//   group: "system"   — settings-type surfaces (Settings, Members, Billing …).
-//                       Render the SettingsScreen. See components/os/screens.tsx.
-//
-// These are generic placeholders — rename/replace them with your real features.
+// SSOT for the OS shell's features — PER WORKSPACE. Each workspace owns its own
+// menu, so the workspace switcher swaps the sidebar / dock / breadcrumb / content
+// for real (see menuForWorkspace + app/os/os-shell.tsx). `icon` keys into
+// components/os/icons.tsx. These are generic placeholders — rename/replace them
+// (and give each workspace its real features) as you build the app out.
 export type FeatureGroup = "project" | "system";
 
 export type MenuItem = {
@@ -17,21 +13,8 @@ export type MenuItem = {
   group: FeatureGroup;
 };
 
-export const MENU: MenuItem[] = [
-  // Project features — generic placeholders. Rename these to your real features.
-  { slug: "feature-1", label: "Feature 1", sub: "Placeholder feature", icon: "home", group: "project" },
-  { slug: "feature-2", label: "Feature 2", sub: "Placeholder feature", icon: "folder", group: "project" },
-  { slug: "feature-3", label: "Feature 3", sub: "Placeholder feature", icon: "chart", group: "project" },
-  { slug: "feature-4", label: "Feature 4", sub: "Placeholder feature", icon: "doc", group: "project" },
-  // System features — settings-type surfaces. These render the settings screen.
-  { slug: "members", label: "Members", sub: "People and permissions", icon: "people", group: "system" },
-  { slug: "billing", label: "Billing", sub: "Plan and invoices", icon: "card", group: "system" },
-  { slug: "settings", label: "Settings", sub: "Workspace configuration", icon: "gear", group: "system" },
-];
-
-// The mobile dock's raised center action — a distinct primary action, so it lives
-// outside MENU but resolves through MENU_BY_SLUG's fallback so the shell can title
-// it like any other feature.
+// The mobile dock's raised center action — a distinct primary action shared by
+// every workspace, so it lives outside the per-workspace menus.
 export const FAB: MenuItem = {
   slug: "assistant",
   label: "Assistant",
@@ -40,39 +23,98 @@ export const FAB: MenuItem = {
   group: "project",
 };
 
-export const PROJECT_FEATURES = MENU.filter((m) => m.group === "project");
-export const SYSTEM_FEATURES = MENU.filter((m) => m.group === "system");
+// Compact builders for the placeholder menus below.
+const proj = (n: number, icon: string): MenuItem => ({
+  slug: `feature-${n}`,
+  label: `Feature ${n}`,
+  sub: "Placeholder feature",
+  icon,
+  group: "project",
+});
+const sys = (slug: string, label: string, sub: string, icon: string): MenuItem => ({
+  slug,
+  label,
+  sub,
+  icon,
+  group: "system",
+});
 
-export const MENU_BY_SLUG: Record<string, MenuItem> = Object.fromEntries(
-  MENU.map((m) => [m.slug, m]),
-);
-
-// --- Workspace switcher (sidebar header) ---------------------------------
-// Placeholder workspaces for the switcher. `icon` keys into icons.tsx like a
-// MenuItem. Kept a real typed model so the seam below is honest.
 export type Workspace = {
   id: string;
   name: string;
   plan: string;
   icon: string;
+  menu: MenuItem[]; // this workspace's own features (both groups)
 };
 
+// Placeholder workspaces, each with a DIFFERENT menu so switching visibly swaps
+// the sidebar, dock, breadcrumb, and screen. Free has fewer features; Enterprise
+// has more — a real app would source each workspace's menu from its data.
 export const WORKSPACES: Workspace[] = [
-  { id: "acme", name: "Acme Inc", plan: "Pro", icon: "sparkle" },
-  { id: "monsters", name: "Monsters LLC", plan: "Free", icon: "folder" },
-  { id: "hooli", name: "Hooli", plan: "Enterprise", icon: "chart" },
+  {
+    id: "acme",
+    name: "Acme Inc",
+    plan: "Pro",
+    icon: "sparkle",
+    menu: [
+      proj(1, "home"),
+      proj(2, "folder"),
+      proj(3, "chart"),
+      proj(4, "doc"),
+      sys("members", "Members", "People and permissions", "people"),
+      sys("billing", "Billing", "Plan and invoices", "card"),
+      sys("settings", "Settings", "Workspace configuration", "gear"),
+    ],
+  },
+  {
+    id: "monsters",
+    name: "Monsters LLC",
+    plan: "Free",
+    icon: "folder",
+    menu: [
+      proj(1, "home"),
+      proj(2, "folder"),
+      sys("settings", "Settings", "Workspace configuration", "gear"),
+    ],
+  },
+  {
+    id: "hooli",
+    name: "Hooli",
+    plan: "Enterprise",
+    icon: "chart",
+    menu: [
+      proj(1, "home"),
+      proj(2, "folder"),
+      proj(3, "chart"),
+      proj(4, "doc"),
+      proj(5, "people"),
+      proj(6, "card"),
+      sys("members", "Members", "People and permissions", "people"),
+      sys("billing", "Billing", "Plan and invoices", "card"),
+      sys("audit", "Audit log", "Every action, logged", "search"),
+      sys("settings", "Settings", "Workspace configuration", "gear"),
+    ],
+  },
 ];
 
-// SEAM — switching workspace is cosmetic for now (WorkspaceSwitcher just sets
-// state in the shell). A real impl would derive the menu PER workspace here,
-// e.g. `menuForWorkspace(id): { project: MenuItem[]; system: MenuItem[] }`,
-// and the shell would read from that instead of the module-level PROJECT_FEATURES
-// / SYSTEM_FEATURES. The data model above is already shaped for that — wire it
-// when workspaces actually diverge; don't build the switching before it's needed.
+export const WORKSPACE_BY_ID: Record<string, Workspace> = Object.fromEntries(
+  WORKSPACES.map((w) => [w.id, w]),
+);
 
-// --- Signed-in user (sidebar footer nav-user) ----------------------------
-// Placeholder identity for NavUser. Swap for the real @convex-dev/auth user
-// (name/email from the users table) when auth is wired into the OS shell.
+// The seam that makes switching real: the shell reads project/system/bySlug for
+// the ACTIVE workspace from here, instead of a global menu. Cheap (filters a small
+// array) — no memo needed for placeholder data.
+export function menuForWorkspace(id: string) {
+  const ws = WORKSPACE_BY_ID[id] ?? WORKSPACES[0];
+  return {
+    project: ws.menu.filter((m) => m.group === "project"),
+    system: ws.menu.filter((m) => m.group === "system"),
+    bySlug: Object.fromEntries(ws.menu.map((m) => [m.slug, m])) as Record<string, MenuItem>,
+  };
+}
+
+// Signed-in user (sidebar footer nav-user) — placeholder. Swap for the real
+// @convex-dev/auth user (name/email from the users table) when auth is wired in.
 export type OsUser = { name: string; email: string; initials: string };
 
 export const USER: OsUser = {
