@@ -21,7 +21,7 @@ export const add = mutation({
   handler: async (ctx, { text }) => {
     const userId = await requireUser(ctx);
     const clean = text.trim().slice(0, 500);
-    if (!clean) throw new ConvexError("Note cannot be empty.");
+    if (!clean) throw new ConvexError({ code: "EMPTY", message: "Note cannot be empty." });
     return ctx.db.insert("notes", { userId, text: clean, done: false });
   },
 });
@@ -31,7 +31,8 @@ export const toggle = mutation({
   handler: async (ctx, { id }) => {
     const userId = await requireUser(ctx);
     const note = await ctx.db.get(id);
-    if (!note || note.userId !== userId) throw new ConvexError("Note not found.");
+    if (!note || note.userId !== userId)
+      throw new ConvexError({ code: "NOT_FOUND", message: "Note not found." });
     await ctx.db.patch(id, { done: !note.done });
   },
 });
@@ -41,7 +42,8 @@ export const remove = mutation({
   handler: async (ctx, { id }) => {
     const userId = await requireUser(ctx);
     const note = await ctx.db.get(id);
-    if (!note || note.userId !== userId) throw new ConvexError("Note not found.");
+    if (!note || note.userId !== userId)
+      throw new ConvexError({ code: "NOT_FOUND", message: "Note not found." });
     await ctx.db.delete(id);
   },
 });

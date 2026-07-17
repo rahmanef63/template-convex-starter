@@ -14,15 +14,55 @@ Next.js 16 (App Router) + React 19 + **Convex** (reactive backend + DB) +
 `@convex-dev/auth` (Password) + Tailwind v4 + TypeScript. Deploys to Vercel;
 `convex deploy` runs on every build. See `README.md` for the deploy contract.
 
+## Relationship to rr (Rahman Resources)
+
+This starter follows the **rr best-practice doctrine** (the `resources` repo →
+`/best-practice`, source `lib/content/best-practices.ts`). It is an rr
+**TEMPLATE** — a whole-app scaffold you fork, not a sliced library — in its
+**online** flavor: Convex **Cloud** + **Vercel** + **native UI**. Three
+departures from the default rr slice-app, each a sanctioned TEMPLATE choice (not
+an oversight):
+
+- **Monolithic `app/**` + `convex/<feature>.ts`**, not `slices/<slug>/` — rr
+  templates are forkable scaffolds without slice metadata.
+- **Convex Cloud + Vercel**, not self-hosted + Dokploy — rr's "online" path.
+- **Native elements + Tailwind**, not shadcn — zero UI-kit dependency (the
+  anti-slop pitch). Everything else here is straight rr.
+
+**Rule tiers.** Rules below carry a severity so you know what bends:
+
+- **[P0]** security & data integrity — *never* violate. If a P0 blocks the task,
+  STOP and report; never route around it.
+- **[P1]** architecture & structure — violate only when genuinely necessary, and
+  only with a `// TODO(rr): <why + the compliant version>` at the site plus a
+  note in the commit body.
+- **[P2]** style & modularity — enforced by lint/typecheck/tests; if the tooling
+  passes, you pass.
+
+## Agent protocol (how to apply these rules)
+
+1. Before writing: check whether the change crosses a rule below — follow it even
+   if unasked.
+2. Reuse first: search the repo (`lib/`, `components/`, `convex/_shared/`) for an
+   existing helper before adding code or a dependency.
+3. A **P0** conflict (missing auth/ownership, unvalidated args, a secret behind
+   `NEXT_PUBLIC_`) → STOP and report. Never ship around it.
+4. A necessary **P1** deviation → leave `// TODO(rr): <why + compliant version>`
+   at the site and call it out in the commit body.
+5. State which rules a change honors — e.g. "authz via `requireUser`; indexed via
+   `.withIndex` (no scan)."
+6. After editing: `npm run typecheck` + `npm test`, then drive the flow in the
+   browser. Typecheck is not proof it works.
+
 ## Golden rules (the short list)
 
-1. **Don't build what isn't needed yet.** Delete beats add. (YAGNI)
-2. **One source of truth per fact.** Never store the same thing twice.
-3. **Every Convex mutation checks auth + ownership.** No exceptions.
-4. **Query by index, never scan the table** (`.withIndex`, not `.filter`).
-5. **Reuse before you write.** Search the repo for an existing helper first.
-6. **Match the surrounding code** — its naming, its patterns, its density.
-7. If your change needs a paragraph to justify, it's probably too clever.
+1. **[P2] Don't build what isn't needed yet.** Delete beats add. (YAGNI)
+2. **[P1] One source of truth per fact.** Never store the same thing twice.
+3. **[P0] Every Convex mutation checks auth + ownership.** No exceptions.
+4. **[P1] Query by index, never scan the table** (`.withIndex`, not `.filter`).
+5. **[P1] Reuse before you write.** Search the repo for an existing helper first.
+6. **[P2] Match the surrounding code** — its naming, its patterns, its density.
+7. **[P2]** If your change needs a paragraph to justify, it's probably too clever.
 
 ## Where things live (SSOT map)
 
@@ -68,15 +108,18 @@ No abstraction with one caller. No config for a value that never changes. No
 
 ## Convex rules (correctness & security — never cut these)
 
-- **Auth on every mutation.** Start handlers with `const userId = await
+- **[P0] Auth on every mutation.** Start handlers with `const userId = await
   requireUser(ctx)` (from `convex/_shared/auth.ts`). For row edits, load the row
   and throw if `row.userId !== userId`. See `convex/notes.ts` for the pattern.
-- **Index, don't scan.** Add an index in `schema.ts` and use `.withIndex(...)`.
+- **[P0] Validate args.** Every query/mutation declares `args` with `v.*`
+  validators. Trim/bound user strings before insert (see `notes.add`).
+- **[P1] Index, don't scan.** Add an index in `schema.ts` and use `.withIndex(...)`.
   `.filter()` on a table scans every row and gets slow — reserve it for tiny sets.
-- **Validate args.** Every query/mutation declares `args` with `v.*` validators.
-  Trim/bound user strings before insert (see `notes.add`).
-- **Throw `ConvexError`** for user-facing failures; the client reads `err.data`.
-- **Never touch `convex/_generated`.** Import from it, don't edit it.
+- **[P1] Throw typed `ConvexError`** for user-facing failures:
+  `throw new ConvexError({ code: "NOT_FOUND", message: "…" })`. The client reads
+  `err.data.message` via `errorMessage()` (`lib/errors.ts`) and can branch on
+  `code`. Never leak internal details in the message.
+- **[P0] Never touch `convex/_generated`.** Import from it, don't edit it.
 
 ## Frontend rules (no AI slop)
 
