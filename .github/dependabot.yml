@@ -1,6 +1,11 @@
-# Weekly dependency PRs, grouped so updates arrive as one reviewable PR instead
-# of a flood. This template deploys Vercel-only (no GitHub Actions) — each PR is
-# validated by its Vercel preview build.
+# Weekly dependency PRs. Only SAFE minor + patch updates are grouped into one
+# auto-deployable PR (validated by its Vercel preview build). Major bumps of the
+# framework-pinned toolchain are ignored here and done by hand when the stack is
+# ready — Next 16.2 can't drive the TypeScript 7 native compiler, eslint-config-next
+# tracks ESLint 9, and @types/node must match the Node 24 runtime. (A grouped PR
+# that bundled those majors is exactly what broke the build.) Other majors still
+# arrive as their own individual PRs, so one can never poison the safe batch.
+# This template deploys Vercel-only (no GitHub Actions).
 version: 2
 updates:
   - package-ecosystem: npm
@@ -9,4 +14,11 @@ updates:
       interval: weekly
     groups:
       npm-dependencies:
-        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
