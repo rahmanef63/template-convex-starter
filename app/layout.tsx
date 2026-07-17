@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ConvexClientProvider } from "@/components/convex-provider";
 import { ToastProvider } from "@/components/toast";
 import { siteUrl } from "@/lib/site";
@@ -25,6 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ConvexClientProvider>{children}</ConvexClientProvider>
           </Suspense>
         </ToastProvider>
+        {/* Free on Vercel — no-ops off-Vercel and until you enable each in the
+            project's Analytics / Speed Insights tab. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

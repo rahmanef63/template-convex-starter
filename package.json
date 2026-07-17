@@ -23,6 +23,8 @@
     "@ai-sdk/react": "^4.0.32",
     "@auth/core": "^0.41.1",
     "@convex-dev/auth": "^0.0.94",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "ai": "^7.0.29",
     "convex": "^1.42.2",
     "next": "^16.2.10",
