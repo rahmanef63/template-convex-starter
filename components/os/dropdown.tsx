@@ -16,12 +16,14 @@ export function Dropdown({
   label,
   side = "bottom",
   align = "start",
+  onClose,
 }: {
   trigger: ReactNode;
   children: (close: () => void) => ReactNode;
   label: string;
   side?: "top" | "bottom";
   align?: "start" | "end";
+  onClose?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -54,10 +56,13 @@ export function Dropdown({
   // menu-button contract — unless an outside click already moved it. Reading the
   // ref here (an effect) is fine; reading it during render is not.
   useEffect(() => {
-    if (wasOpen.current && !open && !skipRefocus.current) triggerRef.current?.focus();
+    if (wasOpen.current && !open) {
+      if (!skipRefocus.current) triggerRef.current?.focus();
+      onClose?.();
+    }
     skipRefocus.current = false;
     wasOpen.current = open;
-  }, [open]);
+  }, [open, onClose]);
 
   return (
     <div ref={rootRef} className="relative">

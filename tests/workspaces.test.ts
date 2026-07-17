@@ -51,3 +51,33 @@ test("workspaces are isolated per user", async () => {
   expect((await alice.query(api.workspaces.list, {})).length).toBe(2);
   expect((await bob.query(api.workspaces.list, {})).length).toBe(0); // bob can't see alice's
 });
+
+test("create adds a workspace and returns its id", async () => {
+  const t = setup();
+  const alice = await signUp(t, "alice@example.com");
+  const id = await alice.mutation(api.workspaces.create, { name: "Fresh" });
+  const list = await alice.query(api.workspaces.list, {});
+  expect(list.find((w) => w._id === id)?.name).toBe("Fresh");
+});
+
+test("only the owner can rename or delete a workspace", async () => {
+  const t = setup();
+  const alice = await signUp(t, "alice@example.com");
+  const bob = await signUp(t, "bob@example.com");
+  await alice.mutation(api.workspaces.ensureSeeded, { workspaces: SEED }); // alice has 2
+  const [ws] = await alice.query(api.workspaces.list, {});
+  await expect(bob.mutation(api.workspaces.rename, { id: ws._id, name: "Hacked" })).rejects.toThrow();
+  await expect(bob.mutation(api.workspaces.remove, { id: ws._id })).rejects.toThrow();
+  await alice.mutation(api.workspaces.rename, { id: ws._id, name: "Renamed" });
+  expect((await alice.query(api.workspaces.list, {})).some((w) => w.name === "Renamed")).toBe(true);
+});
+
+test("cannot delete the last workspace", async () => {
+  const t = setup();
+  const alice = await signUp(t, "alice@example.com");
+  const only = await alice.mutation(api.workspaces.create, { name: "Only" });
+  await expect(alice.mutation(api.workspaces.remove, { id: only })).rejects.toThrow();
+  await alice.mutation(api.workspaces.create, { name: "Second" }); // now two — delete works
+  await alice.mutation(api.workspaces.remove, { id: only });
+  expect((await alice.query(api.workspaces.list, {})).map((w) => w.name)).toEqual(["Second"]);
+});

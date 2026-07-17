@@ -18,11 +18,17 @@ import { DashboardScreen, SettingsScreen } from "@/components/os/screens";
 import { OsDock } from "@/components/os/os-dock";
 import { MoreSheet } from "@/components/os/more-sheet";
 import { Topbar } from "@/components/os/topbar";
-import { WorkspaceSwitcher } from "@/components/os/workspace-switcher";
+import { WorkspaceSwitcher, type WorkspaceManage } from "@/components/os/workspace-switcher";
 import { NavUser } from "@/components/os/nav-user";
 import { cn } from "@/lib/cn";
 
-export function OsShell({ workspaces }: { workspaces: Workspace[] }) {
+export function OsShell({
+  workspaces,
+  manage,
+}: {
+  workspaces: Workspace[];
+  manage?: WorkspaceManage;
+}) {
   const [workspaceId, setWorkspaceId] = useState(workspaces[0]?.id ?? "");
   const activeWorkspace = workspaces.find((w) => w.id === workspaceId) ?? workspaces[0];
   const menu = splitFeatures(activeWorkspace?.features ?? []);
@@ -51,7 +57,12 @@ export function OsShell({ workspaces }: { workspaces: Workspace[] }) {
           collapsed ? "md:hidden" : "md:flex",
         )}
       >
-        <WorkspaceSwitcher workspaces={workspaces} activeId={workspaceId} onChange={selectWorkspace} />
+        <WorkspaceSwitcher
+          workspaces={workspaces}
+          activeId={workspaceId}
+          onChange={selectWorkspace}
+          manage={manage}
+        />
         <nav aria-label="Features" className="mt-5 flex flex-1 flex-col gap-5">
           <NavGroup label="Project" items={menu.project} active={active} onSelect={setActive} />
           <NavGroup label="System" items={menu.system} active={active} onSelect={setActive} />
