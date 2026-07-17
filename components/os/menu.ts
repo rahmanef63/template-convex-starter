@@ -18,11 +18,11 @@ export type MenuItem = {
 };
 
 export const MENU: MenuItem[] = [
-  // Project features — the work the app is actually for.
-  { slug: "dashboard", label: "Dashboard", sub: "Overview of your workspace", icon: "home", group: "project" },
-  { slug: "projects", label: "Projects", sub: "Everything you're working on", icon: "folder", group: "project" },
-  { slug: "tasks", label: "Tasks", sub: "What's on the list", icon: "chart", group: "project" },
-  { slug: "reports", label: "Reports", sub: "Generated summaries and exports", icon: "doc", group: "project" },
+  // Project features — generic placeholders. Rename these to your real features.
+  { slug: "feature-1", label: "Feature 1", sub: "Placeholder feature", icon: "home", group: "project" },
+  { slug: "feature-2", label: "Feature 2", sub: "Placeholder feature", icon: "folder", group: "project" },
+  { slug: "feature-3", label: "Feature 3", sub: "Placeholder feature", icon: "chart", group: "project" },
+  { slug: "feature-4", label: "Feature 4", sub: "Placeholder feature", icon: "doc", group: "project" },
   // System features — settings-type surfaces. These render the settings screen.
   { slug: "members", label: "Members", sub: "People and permissions", icon: "people", group: "system" },
   { slug: "billing", label: "Billing", sub: "Plan and invoices", icon: "card", group: "system" },
