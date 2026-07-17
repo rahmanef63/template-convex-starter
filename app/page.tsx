@@ -14,6 +14,10 @@ const features = [
     title: "Auto-deploy",
     body: "Convex functions + schema deploy on every Vercel build. Nothing extra to run.",
   },
+  {
+    title: "Adaptive UI shell",
+    body: "A desktop dashboard + mobile dock placeholder at /os — grouped project & system features, ready to fill in.",
+  },
 ];
 
 export default function Home() {
@@ -34,18 +38,18 @@ export default function Home() {
           push, and ship — no backend to stand up.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link href="/os" className="btn-primary">
+            View the dashboard demo →
+          </Link>
           {IS_DEMO ? (
-            <a href={CLONE_URL} target="_blank" rel="noreferrer" className="btn-primary">
+            <a href={CLONE_URL} target="_blank" rel="noreferrer" className="btn-ghost">
               Clone this project ↗
             </a>
           ) : (
-            <Link href="/login" className="btn-primary">
+            <Link href="/login" className="btn-ghost">
               Get started
             </Link>
           )}
-          <Link href={IS_DEMO ? "/login" : "/dashboard"} className="btn-ghost">
-            {IS_DEMO ? "Try the demo" : "Go to dashboard"}
-          </Link>
         </div>
       </section>
 

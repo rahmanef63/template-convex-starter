@@ -7,6 +7,7 @@
 // difference is visible. Swap the placeholder screens for real <Authenticated>
 // useQuery data as you build each feature out.
 import { useState } from "react";
+import Link from "next/link";
 import {
   PROJECT_FEATURES,
   SYSTEM_FEATURES,
@@ -29,14 +30,18 @@ export function OsShell() {
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card/40 p-4 md:flex">
-        <div className="flex items-center gap-2 px-2 pb-5">
+        <Link
+          href="/"
+          aria-label="Back to home"
+          className="mb-5 flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-card-hover"
+        >
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-accent-foreground">
             <Icon name="sparkle" className="h-4 w-4" />
           </span>
           <span className="text-sm font-semibold tracking-tight">
             STARTER <span className="text-accent">OS</span>
           </span>
-        </div>
+        </Link>
         <nav aria-label="Features" className="flex flex-1 flex-col gap-5">
           <NavGroup label="Project" items={PROJECT_FEATURES} active={active} onSelect={setActive} />
           <NavGroup
