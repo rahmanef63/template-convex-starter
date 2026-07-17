@@ -6,7 +6,7 @@
 // body scroll lock, and real focus management (focus in on open, trap Tab within
 // the dialog, restore to the trigger on close) so aria-modal is an honest claim.
 import { useEffect, useRef } from "react";
-import { MENU } from "./menu";
+import { PROJECT_FEATURES, SYSTEM_FEATURES, type MenuItem } from "./menu";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 
@@ -62,6 +62,11 @@ export function MoreSheet({
 
   if (!open) return null;
 
+  const pick = (slug: string) => {
+    onSelect(slug);
+    onClose();
+  };
+
   return (
     <div
       ref={dialogRef}
@@ -80,44 +85,73 @@ export function MoreSheet({
       <div className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl border-t border-border bg-card pb-[calc(env(safe-area-inset-bottom)+1rem)]">
         <div className="mx-auto mt-3 h-1 w-9 shrink-0 rounded-full bg-border" />
         <div className="px-5 pt-3 pb-4">
-          <h2 className="text-lg font-semibold tracking-tight">All apps</h2>
-          <p className="text-sm text-muted-foreground">Placeholder — every app in the shell.</p>
+          <h2 className="text-lg font-semibold tracking-tight">All features</h2>
+          <p className="text-sm text-muted-foreground">Placeholder — project features + system.</p>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-2">
-          <div className="grid grid-cols-4 gap-x-2 gap-y-4">
-            {MENU.map((item) => {
-              const isActive = item.slug === active;
-              return (
-                <button
-                  key={item.slug}
-                  type="button"
-                  onClick={() => {
-                    onSelect(item.slug);
-                    onClose();
-                  }}
-                  aria-label={item.label}
-                  aria-current={isActive ? "page" : undefined}
-                  className="flex flex-col items-center gap-1.5"
-                >
-                  <span
-                    className={cn(
-                      "grid h-14 w-14 place-items-center rounded-2xl border shadow-sm transition-transform motion-safe:active:scale-95",
-                      isActive
-                        ? "border-accent/50 bg-accent/12 text-accent"
-                        : "border-border bg-card-hover text-foreground",
-                    )}
-                  >
-                    <Icon name={item.icon} className="h-6 w-6" />
-                  </span>
-                  <span className="line-clamp-2 min-h-[2rem] text-center text-[11px] font-medium text-foreground/85">
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 pb-2">
+          <SheetGroup label="Project" items={PROJECT_FEATURES} active={active} onSelect={pick} />
+          <SheetGroup label="System" items={SYSTEM_FEATURES} active={active} onSelect={pick} />
         </div>
       </div>
     </div>
+  );
+}
+
+function SheetGroup({
+  label,
+  items,
+  active,
+  onSelect,
+}: {
+  label: string;
+  items: MenuItem[];
+  active: string;
+  onSelect: (slug: string) => void;
+}) {
+  return (
+    <div>
+      <p className="px-1 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
+      <div className="grid grid-cols-4 gap-x-2 gap-y-4">
+        {items.map((item) => (
+          <SheetItem key={item.slug} item={item} active={item.slug === active} onSelect={onSelect} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SheetItem({
+  item,
+  active,
+  onSelect,
+}: {
+  item: MenuItem;
+  active: boolean;
+  onSelect: (slug: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(item.slug)}
+      aria-label={item.label}
+      aria-current={active ? "page" : undefined}
+      className="flex flex-col items-center gap-1.5"
+    >
+      <span
+        className={cn(
+          "grid h-14 w-14 place-items-center rounded-2xl border shadow-sm transition-transform motion-safe:active:scale-95",
+          active
+            ? "border-accent/50 bg-accent/12 text-accent"
+            : "border-border bg-card-hover text-foreground",
+        )}
+      >
+        <Icon name={item.icon} className="h-6 w-6" />
+      </span>
+      <span className="line-clamp-2 min-h-[2rem] text-center text-[11px] font-medium text-foreground/85">
+        {item.label}
+      </span>
+    </button>
   );
 }

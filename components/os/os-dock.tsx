@@ -1,10 +1,10 @@
 "use client";
 
 // Mobile bottom dock (hidden on md+). Five slots around a raised center action:
-// [tab0][tab1][FAB][tab2][Menu]. Tabs are the first three MENU apps; the FAB is
-// the primary "Assistant" action; Menu opens the all-apps sheet. Renders from
-// the same MENU SSOT as the desktop sidebar — no separate list to keep in sync.
-import { MENU, FAB, type MenuItem } from "./menu";
+// [tab0][tab1][FAB][tab2][Menu]. Tabs are the first three PROJECT features; the
+// FAB is the primary "Assistant" action; Menu opens the all-features sheet (which
+// lists both project + system). Same SSOT as the desktop sidebar — no drift.
+import { PROJECT_FEATURES, FAB, type MenuItem } from "./menu";
 import { Icon } from "./icons";
 import { cn } from "@/lib/cn";
 
@@ -17,7 +17,7 @@ export function OsDock({
   onSelect: (slug: string) => void;
   onOpenMore: () => void;
 }) {
-  const tabs = MENU.slice(0, 3);
+  const tabs = PROJECT_FEATURES.slice(0, 3);
   const fabActive = active === FAB.slug;
   const moreActive = !fabActive && !tabs.some((t) => t.slug === active);
 
