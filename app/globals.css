@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
-/* Dark by default (not OS-dependent). One neutral system + a single warm accent
-   used sparingly — near-white primary actions keep it out of the blue/purple
-   AI-slop register. Tokens drive every surface; pages never hardcode a hex or a
-   `dark:` variant. Extend this, don't fight it. */
+/* Dark by DEFAULT (theme is user-switchable via next-themes, not OS-dependent).
+   One neutral system + a single warm accent used sparingly — near-white primary
+   actions keep it out of the blue/purple AI-slop register. Tokens drive every
+   surface; components never hardcode a hex or use a `dark:` variant — they read
+   the tokens, and the theme swap re-points the tokens.
+
+   next-themes runs with attribute="class": it stamps class="dark" or
+   class="light" on <html>. Dark is the default here, so `:root` already holds
+   the dark values (class="dark" resolves to :root → no separate .dark rule, and
+   no flash for default users). `.light` overrides for the light theme. */
 :root {
   color-scheme: dark;
   --background: #0a0a0a;
@@ -19,6 +25,26 @@
   --accent-foreground: #0a0a0a;
   --ring: #f5b544;
   --destructive: #f87171;
+}
+
+/* Light theme — mirrors the neutral system. The amber accent is darkened
+   (#b45309) so it passes contrast both as TEXT on light surfaces and as a
+   BACKGROUND behind white (--accent-foreground). */
+.light {
+  color-scheme: light;
+  --background: #fafafa;
+  --card: #ffffff;
+  --card-hover: #f1f1f1;
+  --foreground: #171717;
+  --muted-foreground: #6b6b6b;
+  --border: #e5e5e5;
+  --border-hover: #d4d4d4;
+  --primary: #171717;
+  --primary-foreground: #fafafa;
+  --accent: #b45309;
+  --accent-foreground: #ffffff;
+  --ring: #b45309;
+  --destructive: #dc2626;
 }
 
 @theme inline {

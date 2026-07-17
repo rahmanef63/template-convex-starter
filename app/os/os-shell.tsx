@@ -7,11 +7,11 @@
 // difference is visible. Swap the placeholder screens for real <Authenticated>
 // useQuery data as you build each feature out.
 import { useState } from "react";
-import Link from "next/link";
 import {
   PROJECT_FEATURES,
   SYSTEM_FEATURES,
   MENU_BY_SLUG,
+  WORKSPACES,
   FAB,
   type MenuItem,
 } from "@/components/os/menu";
@@ -19,55 +19,50 @@ import { Icon } from "@/components/os/icons";
 import { DashboardScreen, SettingsScreen } from "@/components/os/screens";
 import { OsDock } from "@/components/os/os-dock";
 import { MoreSheet } from "@/components/os/more-sheet";
+import { Topbar } from "@/components/os/topbar";
+import { WorkspaceSwitcher } from "@/components/os/workspace-switcher";
+import { NavUser } from "@/components/os/nav-user";
 import { cn } from "@/lib/cn";
 
 export function OsShell() {
   const [active, setActive] = useState(PROJECT_FEATURES[0]?.slug ?? FAB.slug);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [workspaceId, setWorkspaceId] = useState(WORKSPACES[0]?.id ?? "");
   const app = MENU_BY_SLUG[active] ?? FAB;
   const isSystem = app.group === "system";
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card/40 p-4 md:flex">
-        <Link
-          href="/"
-          aria-label="Back to home"
-          className="mb-5 flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-card-hover"
-        >
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-accent-foreground">
-            <Icon name="sparkle" className="h-4 w-4" />
-          </span>
-          <span className="text-sm font-semibold tracking-tight">
-            STARTER <span className="text-accent">OS</span>
-          </span>
-        </Link>
-        <nav aria-label="Features" className="flex flex-1 flex-col gap-5">
+      <aside
+        className={cn(
+          "hidden w-64 shrink-0 flex-col border-r border-border bg-card/40 p-4",
+          collapsed ? "md:hidden" : "md:flex",
+        )}
+      >
+        <WorkspaceSwitcher activeId={workspaceId} onChange={setWorkspaceId} />
+        <nav aria-label="Features" className="mt-5 flex flex-1 flex-col gap-5">
           <NavGroup label="Project" items={PROJECT_FEATURES} active={active} onSelect={setActive} />
-          <NavGroup
-            label="System"
-            items={SYSTEM_FEATURES}
-            active={active}
-            onSelect={setActive}
-            className="mt-auto"
-          />
+          <NavGroup label="System" items={SYSTEM_FEATURES} active={active} onSelect={setActive} />
         </nav>
+        <div className="mt-4 border-t border-border pt-3">
+          <NavUser />
+        </div>
       </aside>
 
       <main className="min-w-0 flex-1 overflow-y-auto p-5 sm:p-7">
-        <header className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 pb-6">
-          <div className="min-w-0">
-            <p className="text-xs font-medium uppercase tracking-widest text-accent">
-              {isSystem ? "System" : "Workspace"}
-            </p>
-            <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">{app.label}</h1>
-            <p className="truncate text-sm text-muted-foreground">{app.sub}</p>
-          </div>
-          <button type="button" className="btn-ghost" aria-label="Search (placeholder)">
-            <Icon name="search" className="h-4 w-4" />
-            <span>Search</span>
-            <kbd className="hidden rounded border border-border px-1 text-[10px] sm:inline">⌘K</kbd>
-          </button>
+        <Topbar
+          app={app}
+          workspaceId={workspaceId}
+          collapsed={collapsed}
+          onToggleSidebar={() => setCollapsed((v) => !v)}
+        />
+        <header className="pb-6">
+          <p className="text-xs font-medium uppercase tracking-widest text-accent">
+            {isSystem ? "System" : "Workspace"}
+          </p>
+          <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">{app.label}</h1>
+          <p className="truncate text-sm text-muted-foreground">{app.sub}</p>
         </header>
 
         {isSystem ? <SettingsScreen app={app} /> : <DashboardScreen app={app} />}

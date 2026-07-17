@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ConvexClientProvider } from "@/components/convex-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/toast";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -22,11 +23,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ToastProvider>
-          <Suspense fallback={null}>
-            <ConvexClientProvider>{children}</ConvexClientProvider>
-          </Suspense>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <Suspense fallback={null}>
+              <ConvexClientProvider>{children}</ConvexClientProvider>
+            </Suspense>
+          </ToastProvider>
+        </ThemeProvider>
         {/* Free on Vercel — no-ops off-Vercel and until you enable each in the
             project's Analytics / Speed Insights tab. */}
         <Analytics />

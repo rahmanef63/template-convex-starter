@@ -46,3 +46,37 @@ export const SYSTEM_FEATURES = MENU.filter((m) => m.group === "system");
 export const MENU_BY_SLUG: Record<string, MenuItem> = Object.fromEntries(
   MENU.map((m) => [m.slug, m]),
 );
+
+// --- Workspace switcher (sidebar header) ---------------------------------
+// Placeholder workspaces for the switcher. `icon` keys into icons.tsx like a
+// MenuItem. Kept a real typed model so the seam below is honest.
+export type Workspace = {
+  id: string;
+  name: string;
+  plan: string;
+  icon: string;
+};
+
+export const WORKSPACES: Workspace[] = [
+  { id: "acme", name: "Acme Inc", plan: "Pro", icon: "sparkle" },
+  { id: "monsters", name: "Monsters LLC", plan: "Free", icon: "folder" },
+  { id: "hooli", name: "Hooli", plan: "Enterprise", icon: "chart" },
+];
+
+// SEAM — switching workspace is cosmetic for now (WorkspaceSwitcher just sets
+// state in the shell). A real impl would derive the menu PER workspace here,
+// e.g. `menuForWorkspace(id): { project: MenuItem[]; system: MenuItem[] }`,
+// and the shell would read from that instead of the module-level PROJECT_FEATURES
+// / SYSTEM_FEATURES. The data model above is already shaped for that — wire it
+// when workspaces actually diverge; don't build the switching before it's needed.
+
+// --- Signed-in user (sidebar footer nav-user) ----------------------------
+// Placeholder identity for NavUser. Swap for the real @convex-dev/auth user
+// (name/email from the users table) when auth is wired into the OS shell.
+export type OsUser = { name: string; email: string; initials: string };
+
+export const USER: OsUser = {
+  name: "Jane Cooper",
+  email: "jane@acme.com",
+  initials: "JC",
+};

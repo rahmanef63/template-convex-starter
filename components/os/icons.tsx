@@ -18,6 +18,15 @@ const PATHS: Record<string, string> = {
   // three round-capped zero-length strokes render as dots
   more: "M6 12h.01M12 12h.01M18 12h.01",
   search: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14M20 20l-3.6-3.6",
+  "chevrons-up-down": "M8 9l4-4 4 4M8 15l4 4 4-4",
+  plus: "M12 5v14M5 12h14",
+  sun: "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4",
+  moon: "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z",
+  monitor: "M3 5h18v11H3zM8 21h8M12 16v5",
+  "panel-left": "M4 5h16v14H4zM10 5v14",
+  user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M5 20a7 7 0 0 1 14 0",
+  logout: "M15 4h4v16h-4M11 8l4 4-4 4M15 12H3",
+  check: "M5 12l5 5 9-11",
 };
 
 export function Icon({
