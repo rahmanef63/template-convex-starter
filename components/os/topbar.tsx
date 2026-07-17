@@ -5,22 +5,21 @@
 // theme picker + the Search button (moved here from the old header). The trigger
 // is desktop-only (mobile is dock-driven, the aside is always hidden < md); the
 // breadcrumb and theme picker show on every viewport.
-import { WORKSPACES, type MenuItem } from "./menu";
+import { type MenuItem } from "./menu";
 import { Icon } from "./icons";
 import { ThemePicker } from "@/components/theme-picker";
 
 export function Topbar({
   app,
-  workspaceId,
+  workspaceName,
   collapsed,
   onToggleSidebar,
 }: {
   app: MenuItem;
-  workspaceId: string;
+  workspaceName: string;
   collapsed: boolean;
   onToggleSidebar: () => void;
 }) {
-  const workspace = WORKSPACES.find((w) => w.id === workspaceId) ?? WORKSPACES[0];
   const groupLabel = app.group === "system" ? "System" : "Project";
 
   return (
@@ -37,7 +36,7 @@ export function Topbar({
         </button>
         <nav aria-label="Breadcrumb" className="min-w-0">
           <ol className="flex min-w-0 items-center gap-1.5 text-sm">
-            <Crumb>{workspace.name}</Crumb>
+            <Crumb>{workspaceName}</Crumb>
             <Sep />
             <Crumb>{groupLabel}</Crumb>
             <Sep />

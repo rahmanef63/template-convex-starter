@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { OsShell } from "./os-shell";
+import { OsRoute } from "./os-route";
 
 export const metadata: Metadata = { title: "OS" };
 
 export default function OsPage() {
-  return <OsShell />;
+  return <OsRoute />;
 }

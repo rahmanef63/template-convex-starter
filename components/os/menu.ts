@@ -39,24 +39,28 @@ const sys = (slug: string, label: string, sub: string, icon: string): MenuItem =
   group: "system",
 });
 
+// A workspace + its features. `id` is the Convex `_id` for signed-in users, or a
+// stable slug for the logged-out placeholder set below — the shell only needs a
+// string key. Mirrors the `workspaces` table shape (convex/schema.ts).
 export type Workspace = {
   id: string;
   name: string;
   plan: string;
   icon: string;
-  menu: MenuItem[]; // this workspace's own features (both groups)
+  features: MenuItem[];
 };
 
-// Placeholder workspaces, each with a DIFFERENT menu so switching visibly swaps
-// the sidebar, dock, breadcrumb, and screen. Free has fewer features; Enterprise
-// has more — a real app would source each workspace's menu from its data.
+// Logged-out placeholder set (the public demo) AND the seed sent to Convex on a
+// new user's first visit (workspaces.ensureSeeded). Each has a DIFFERENT menu so
+// switching visibly swaps the sidebar, dock, breadcrumb, and screen: Free has
+// fewer features, Enterprise more.
 export const WORKSPACES: Workspace[] = [
   {
     id: "acme",
     name: "Acme Inc",
     plan: "Pro",
     icon: "sparkle",
-    menu: [
+    features: [
       proj(1, "home"),
       proj(2, "folder"),
       proj(3, "chart"),
@@ -71,7 +75,7 @@ export const WORKSPACES: Workspace[] = [
     name: "Monsters LLC",
     plan: "Free",
     icon: "folder",
-    menu: [
+    features: [
       proj(1, "home"),
       proj(2, "folder"),
       sys("settings", "Settings", "Workspace configuration", "gear"),
@@ -82,7 +86,7 @@ export const WORKSPACES: Workspace[] = [
     name: "Hooli",
     plan: "Enterprise",
     icon: "chart",
-    menu: [
+    features: [
       proj(1, "home"),
       proj(2, "folder"),
       proj(3, "chart"),
@@ -97,19 +101,14 @@ export const WORKSPACES: Workspace[] = [
   },
 ];
 
-export const WORKSPACE_BY_ID: Record<string, Workspace> = Object.fromEntries(
-  WORKSPACES.map((w) => [w.id, w]),
-);
-
-// The seam that makes switching real: the shell reads project/system/bySlug for
-// the ACTIVE workspace from here, instead of a global menu. Cheap (filters a small
-// array) — no memo needed for placeholder data.
-export function menuForWorkspace(id: string) {
-  const ws = WORKSPACE_BY_ID[id] ?? WORKSPACES[0];
+// Split one workspace's features into the two nav groups + a slug lookup. Cheap
+// (filters a small array) — the shell calls it for the active workspace, whether
+// the workspaces came from Convex or the placeholder set.
+export function splitFeatures(features: MenuItem[]) {
   return {
-    project: ws.menu.filter((m) => m.group === "project"),
-    system: ws.menu.filter((m) => m.group === "system"),
-    bySlug: Object.fromEntries(ws.menu.map((m) => [m.slug, m])) as Record<string, MenuItem>,
+    project: features.filter((m) => m.group === "project"),
+    system: features.filter((m) => m.group === "system"),
+    bySlug: Object.fromEntries(features.map((m) => [m.slug, m])) as Record<string, MenuItem>,
   };
 }
 

@@ -4,18 +4,21 @@
 // over the shared Dropdown (opens downward). Controlled: the shell owns the active
 // id and, on change, swaps the whole menu for that workspace (menuForWorkspace in
 // menu.ts) — the sidebar nav, dock, breadcrumb, and content all follow.
-import { WORKSPACES } from "./menu";
+import { type Workspace } from "./menu";
 import { Icon } from "./icons";
 import { Dropdown, DropdownItem, DropdownDivider } from "./dropdown";
 
 export function WorkspaceSwitcher({
+  workspaces,
   activeId,
   onChange,
 }: {
+  workspaces: Workspace[];
   activeId: string;
   onChange: (id: string) => void;
 }) {
-  const active = WORKSPACES.find((w) => w.id === activeId) ?? WORKSPACES[0];
+  const active = workspaces.find((w) => w.id === activeId) ?? workspaces[0];
+  if (!active) return null;
 
   return (
     <Dropdown
@@ -41,7 +44,7 @@ export function WorkspaceSwitcher({
           <p className="px-2.5 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
             Workspaces
           </p>
-          {WORKSPACES.map((w) => {
+          {workspaces.map((w) => {
             const isActive = w.id === activeId;
             return (
               <DropdownItem

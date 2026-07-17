@@ -8,10 +8,10 @@
 // useQuery data as you build each feature out.
 import { useState } from "react";
 import {
-  menuForWorkspace,
-  WORKSPACES,
+  splitFeatures,
   FAB,
   type MenuItem,
+  type Workspace,
 } from "@/components/os/menu";
 import { Icon } from "@/components/os/icons";
 import { DashboardScreen, SettingsScreen } from "@/components/os/screens";
@@ -22,9 +22,10 @@ import { WorkspaceSwitcher } from "@/components/os/workspace-switcher";
 import { NavUser } from "@/components/os/nav-user";
 import { cn } from "@/lib/cn";
 
-export function OsShell() {
-  const [workspaceId, setWorkspaceId] = useState(WORKSPACES[0]?.id ?? "");
-  const menu = menuForWorkspace(workspaceId);
+export function OsShell({ workspaces }: { workspaces: Workspace[] }) {
+  const [workspaceId, setWorkspaceId] = useState(workspaces[0]?.id ?? "");
+  const activeWorkspace = workspaces.find((w) => w.id === workspaceId) ?? workspaces[0];
+  const menu = splitFeatures(activeWorkspace?.features ?? []);
   const [active, setActive] = useState(menu.project[0]?.slug ?? FAB.slug);
   const [moreOpen, setMoreOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -36,7 +37,7 @@ export function OsShell() {
   // first feature so the content never points at a feature this workspace lacks.
   function selectWorkspace(id: string) {
     setWorkspaceId(id);
-    const next = menuForWorkspace(id);
+    const next = splitFeatures(workspaces.find((w) => w.id === id)?.features ?? []);
     setActive((cur) =>
       cur === FAB.slug || cur in next.bySlug ? cur : next.project[0]?.slug ?? FAB.slug,
     );
@@ -50,7 +51,7 @@ export function OsShell() {
           collapsed ? "md:hidden" : "md:flex",
         )}
       >
-        <WorkspaceSwitcher activeId={workspaceId} onChange={selectWorkspace} />
+        <WorkspaceSwitcher workspaces={workspaces} activeId={workspaceId} onChange={selectWorkspace} />
         <nav aria-label="Features" className="mt-5 flex flex-1 flex-col gap-5">
           <NavGroup label="Project" items={menu.project} active={active} onSelect={setActive} />
           <NavGroup label="System" items={menu.system} active={active} onSelect={setActive} />
@@ -63,7 +64,7 @@ export function OsShell() {
       <main className="min-w-0 flex-1 overflow-y-auto p-5 sm:p-7">
         <Topbar
           app={app}
-          workspaceId={workspaceId}
+          workspaceName={activeWorkspace?.name ?? ""}
           collapsed={collapsed}
           onToggleSidebar={() => setCollapsed((v) => !v)}
         />
