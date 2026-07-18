@@ -43,7 +43,11 @@ export function OsShell({
   // first feature so the content never points at a feature this workspace lacks.
   function selectWorkspace(id: string) {
     setWorkspaceId(id);
-    const next = splitFeatures(workspaces.find((w) => w.id === id)?.features ?? []);
+    const ws = workspaces.find((w) => w.id === id);
+    // A just-created workspace isn't in the reactive list yet — keep the current
+    // feature (it stays valid once the workspace loads) rather than falling to FAB.
+    if (!ws) return;
+    const next = splitFeatures(ws.features);
     setActive((cur) =>
       cur === FAB.slug || cur in next.bySlug ? cur : next.project[0]?.slug ?? FAB.slug,
     );

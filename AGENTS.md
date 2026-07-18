@@ -163,6 +163,12 @@ Four steps, in order, every time:
 Then verify it actually works (drive the flow in the browser), not just that it
 typechecks. See `README.md` → Local dev.
 
+`convex/notes.ts` is the minimal example (list + owner-only writes). For the
+fuller pattern — per-user CRUD (create/rename/delete + ownership), a public
+placeholder that graduates to Convex behind `<Authenticated>`, and a
+data-source-agnostic UI — see `convex/workspaces.ts` + the `/os` shell
+(`app/os/**`, `components/os/**`).
+
 ## Merging an ongoing project (`src/` → this starter)
 
 You can start from an existing app instead of a blank page. The user drops their
