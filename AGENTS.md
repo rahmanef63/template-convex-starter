@@ -3,7 +3,8 @@
 This file is the **single source of truth** for how any AI coding tool (Cursor,
 Claude Code, Copilot, Windsurf, …) should build on top of this template. Read it
 before writing code. `CLAUDE.md` and `.cursor/rules/` just point here — do not
-duplicate rules into them.
+duplicate rules into them. The repo's agent skills live in `.claude/skills/` as
+plain Markdown — any tool can read them, Claude Code just auto-discovers them.
 
 Goal: a beginner can vibe-code features on this starter and the result stays
 clean — no AI slop, no copy-paste, no spaghetti, one source of truth per fact.
@@ -121,6 +122,12 @@ No abstraction with one caller. No config for a value that never changes. No
   `code`. Never leak internal details in the message.
 - **[P0] Never touch `convex/_generated`.** Import from it, don't edit it.
 
+There is no server-side route gate on purpose: auth tokens live in localStorage,
+so no proxy/middleware can read them — pages are static shells and every private
+read/write is an authed Convex function. If you migrate to cookie-based auth
+(`ConvexAuthNextjsProvider`), add a `proxy.ts` and gate there with
+`convexAuth.isAuthenticated()`.
+
 ## Frontend rules (no AI slop)
 
 The look should feel intentional, not templated. Avoid the generic-AI tells:
@@ -132,8 +139,9 @@ The look should feel intentional, not templated. Avoid the generic-AI tells:
 - Prefer native elements + Tailwind classes over pulling a UI-kit dependency for
   one button. Accessibility is not optional: real `<button>`/`<label>`, `alt`
   text, focus states, keyboard support.
-- Loading and empty states are part of the feature, not an afterthought (see the
-  dashboard: `notes === undefined` and `notes.length === 0` are both handled).
+- Loading and empty states are part of the feature, not an afterthought (see
+  `components/os/notes-screen.tsx`: `notes === undefined` and `notes.length === 0`
+  are both handled).
 
 ## Anti-spaghetti
 
@@ -200,8 +208,9 @@ old app carried that the user doesn't actually need.
 
 ## AI (Vercel AI SDK)
 
-- The assistant lives in `app/api/chat/route.ts` (server, holds the key) + a
-  client page. Model is a single constant at the top of the route.
+- The assistant lives in `app/api/chat/route.ts` (server, holds the key) + the
+  Assistant screen in the `/os` shell (`components/os/assistant-screen.tsx`).
+  Model is a single constant at the top of the route.
 - **Default model `claude-sonnet-5`** (best speed/quality for chat). Use
   `claude-opus-4-8` for the hardest reasoning, `claude-haiku-4-5` for cheap/simple.
   Change the one constant.

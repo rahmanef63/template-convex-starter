@@ -10,15 +10,13 @@
   },
   "aliases": {
     "components": "@/components",
-    "ui": "@/components/ui",
     "convex": "@/convex",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "lib": "@/lib"
   },
   "layout": {
     "kind": "app-router",
     "publicRoute": "app",
-    "adminRoute": "app/dashboard"
+    "adminRoute": "app/os"
   },
   "template": {
     "slug": "convex-starter",

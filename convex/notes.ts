@@ -1,6 +1,6 @@
 import { v, ConvexError } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireUser } from "./_shared/auth";
+import { requireOwn, requireUser } from "./_shared/auth";
 
 // Every note belongs to exactly one user. Reads use the by_user index (never a
 // full scan) and every mutation re-checks ownership before touching a row.
@@ -29,10 +29,7 @@ export const add = mutation({
 export const toggle = mutation({
   args: { id: v.id("notes") },
   handler: async (ctx, { id }) => {
-    const userId = await requireUser(ctx);
-    const note = await ctx.db.get(id);
-    if (!note || note.userId !== userId)
-      throw new ConvexError({ code: "NOT_FOUND", message: "Note not found." });
+    const note = await requireOwn(ctx, id, "Note");
     await ctx.db.patch(id, { done: !note.done });
   },
 });
@@ -40,10 +37,7 @@ export const toggle = mutation({
 export const remove = mutation({
   args: { id: v.id("notes") },
   handler: async (ctx, { id }) => {
-    const userId = await requireUser(ctx);
-    const note = await ctx.db.get(id);
-    if (!note || note.userId !== userId)
-      throw new ConvexError({ code: "NOT_FOUND", message: "Note not found." });
+    await requireOwn(ctx, id, "Note");
     await ctx.db.delete(id);
   },
 });

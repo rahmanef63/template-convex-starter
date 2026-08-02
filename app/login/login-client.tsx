@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
 import { errorMessage } from "@/lib/errors";
 
 export function LoginClient() {
   const { signIn } = useAuthActions();
+  const { isAuthenticated } = useConvexAuth();
   const router = useRouter();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [email, setEmail] = useState("");
@@ -14,13 +16,18 @@ export function LoginClient() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Already signed in (e.g. hit /login from a bookmark) → nothing to fill in.
+  useEffect(() => {
+    if (isAuthenticated) router.replace("/os");
+  }, [isAuthenticated, router]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
     try {
       await signIn("password", { email, password, flow });
-      router.push("/dashboard");
+      router.push("/os");
     } catch (err) {
       // Surface a server-thrown message when present; otherwise a clear fallback.
       setError(

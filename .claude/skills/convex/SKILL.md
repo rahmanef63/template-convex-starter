@@ -38,7 +38,6 @@ Prefer `npx convex ai-files install` over copying rules by hand when possible.
 
 After that, use the most specific Convex skill for the task:
 
-- New project or adding Convex to an app: `convex-quickstart`
 - Authentication setup: `convex-setup-auth`
 - Building a reusable Convex component: `convex-create-component`
 - Planning or running a migration: `convex-migration-helper`

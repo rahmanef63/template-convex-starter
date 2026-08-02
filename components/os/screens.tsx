@@ -1,7 +1,16 @@
-// The two placeholder screen bodies the shell swaps between, so the difference
-// between a project feature and a system feature is visible at a glance. Both are
-// static — the seam where you drop real <Authenticated> useQuery data per feature.
-import type { MenuItem } from "./menu";
+// Every screen body the shell can render, picked by slug. Two are REAL features
+// (notes → convex/notes.ts, assistant → app/api/chat/route.ts); the other two are
+// static placeholders — the seam where you drop your own <Authenticated> data.
+import { FAB, NOTES, type MenuItem } from "./menu";
+import { NotesScreen } from "./notes-screen";
+import { AssistantScreen } from "./assistant-screen";
+
+// Slugs come from menu.ts so the router and the nav can never disagree.
+export function Screen({ app }: { app: MenuItem }) {
+  if (app.slug === NOTES.slug) return <NotesScreen />;
+  if (app.slug === FAB.slug) return <AssistantScreen />;
+  return app.group === "system" ? <SettingsScreen app={app} /> : <DashboardScreen app={app} />;
+}
 
 // Project features → a dashboard: stat tiles + a recent list.
 export function DashboardScreen({ app }: { app: MenuItem }) {

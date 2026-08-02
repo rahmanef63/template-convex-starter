@@ -22,33 +22,29 @@ export function OsShellConvex() {
   const remove = useMutation(api.workspaces.remove);
   const toast = useToast();
 
-  // CRUD handlers passed to the switcher. Each surfaces failures (ConvexError
-  // message → toast) and rethrows so the switcher leaves its view open.
+  // One failure contract for every write: surface the ConvexError message as a
+  // toast, then rethrow so the switcher leaves its current view open.
+  const wrap =
+    <A extends unknown[], R>(fn: (...a: A) => Promise<R>) =>
+    async (...a: A) => {
+      try {
+        return await fn(...a);
+      } catch (e) {
+        toast(errorMessage(e), { variant: "error" });
+        throw e;
+      }
+    };
+
+  // CRUD handlers passed to the switcher. Rename/delete swallow the mutation's
+  // return so they match the switcher's `Promise<void>` contract.
   const manage: WorkspaceManage = {
-    onCreate: async () => {
-      try {
-        return await create({ name: "New workspace" });
-      } catch (e) {
-        toast(errorMessage(e), { variant: "error" });
-        throw e;
-      }
-    },
-    onRename: async (id, name) => {
-      try {
-        await rename({ id: id as Id<"workspaces">, name });
-      } catch (e) {
-        toast(errorMessage(e), { variant: "error" });
-        throw e;
-      }
-    },
-    onDelete: async (id) => {
-      try {
-        await remove({ id: id as Id<"workspaces"> });
-      } catch (e) {
-        toast(errorMessage(e), { variant: "error" });
-        throw e;
-      }
-    },
+    onCreate: wrap(() => create({ name: "New workspace" })),
+    onRename: wrap(async (id: string, name: string) => {
+      await rename({ id: id as Id<"workspaces">, name });
+    }),
+    onDelete: wrap(async (id: string) => {
+      await remove({ id: id as Id<"workspaces"> });
+    }),
   };
 
   // First visit → the user has no workspaces yet, so seed the defaults once. The

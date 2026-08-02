@@ -15,7 +15,6 @@
     "test": "vitest run",
     "convex:dev": "convex dev",
     "convex:codegen": "convex codegen",
-    "build:vercel": "convex deploy --cmd 'next build'",
     "build:auto": "node scripts/build.mjs"
   },
   "dependencies": {

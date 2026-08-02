@@ -30,8 +30,8 @@ export function OsDock({
         aria-label="App dock"
         className="pointer-events-auto mx-auto grid max-w-md grid-cols-5 items-end rounded-2xl border border-border bg-card/95 p-1.5 shadow-lg backdrop-blur"
       >
-        <Slot item={tabs[0]} activeSlug={active} onSelect={onSelect} />
-        <Slot item={tabs[1]} activeSlug={active} onSelect={onSelect} />
+        <DockTab item={tabs[0]} activeSlug={active} onSelect={onSelect} />
+        <DockTab item={tabs[1]} activeSlug={active} onSelect={onSelect} />
 
         <div className="flex flex-col items-center">
           <button
@@ -53,7 +53,7 @@ export function OsDock({
           </span>
         </div>
 
-        <Slot item={tabs[2]} activeSlug={active} onSelect={onSelect} />
+        <DockTab item={tabs[2]} activeSlug={active} onSelect={onSelect} />
 
         <button
           type="button"
@@ -73,9 +73,9 @@ export function OsDock({
   );
 }
 
-// A dock slot: a tab if the item exists, else an empty cell so the grid keeps
-// its 5 columns and the FAB stays centered no matter how many apps MENU has.
-function Slot({
+// One dock slot. A missing item still renders an empty cell so the grid keeps its
+// 5 columns and the FAB stays centered no matter how few features a workspace has.
+function DockTab({
   item,
   activeSlug,
   onSelect,
@@ -85,18 +85,7 @@ function Slot({
   onSelect: (slug: string) => void;
 }) {
   if (!item) return <span aria-hidden />;
-  return <DockTab item={item} active={item.slug === activeSlug} onSelect={onSelect} />;
-}
-
-function DockTab({
-  item,
-  active,
-  onSelect,
-}: {
-  item: MenuItem;
-  active: boolean;
-  onSelect: (slug: string) => void;
-}) {
+  const active = item.slug === activeSlug;
   return (
     <button
       type="button"

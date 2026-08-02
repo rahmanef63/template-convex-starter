@@ -12,31 +12,19 @@ import { Skeleton } from "@/components/skeleton";
 // Gated behind sign-in AND the route verifies the caller's Convex auth token,
 // so a public deploy can't have its API key burned. Use it as the reference
 // pattern for your own AI features.
-export function AssistantClient() {
+export function AssistantScreen() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col px-6 py-10">
-      <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">Assistant</h1>
-        <Link
-          href="/dashboard"
-          className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          ← Dashboard
-        </Link>
-      </header>
-
+    <>
       <AuthLoading>
-        <div className="mt-8 space-y-3">
+        <div className="max-w-2xl space-y-3">
           <Skeleton className="h-4 w-2/3" />
           <Skeleton className="h-4 w-1/2" />
         </div>
       </AuthLoading>
 
       <Unauthenticated>
-        <div className="card mt-8 p-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Sign in to use the assistant.
-          </p>
+        <div className="card max-w-2xl p-8 text-center">
+          <p className="text-sm text-muted-foreground">Sign in to use the assistant.</p>
           <Link href="/login" className="btn-primary mt-4">
             Sign in
           </Link>
@@ -46,7 +34,7 @@ export function AssistantClient() {
       <Authenticated>
         <Chat />
       </Authenticated>
-    </main>
+    </>
   );
 }
 
@@ -82,8 +70,10 @@ function Chat() {
   }
 
   return (
-    <div className="mt-6 flex flex-1 flex-col">
-      <div className="flex-1 space-y-4">
+    <div className="flex max-w-2xl flex-col">
+      {/* The shell's <main> already scrolls, so the log gets its own bounded scroll
+          instead of pushing the composer off-screen. */}
+      <div className="max-h-[60vh] space-y-4 overflow-y-auto">
         {messages.length === 0 && (
           <p className="text-sm text-muted-foreground">
             Ask anything to try the Claude-powered assistant.

@@ -1,13 +1,20 @@
 "use client";
 
-// Mobile "all apps" bottom sheet (hidden on md+). Placeholder overlay drawer:
-// a scrim + a slide-up panel gridding the active workspace's features. No modal
-// library — a fixed overlay with the modal basics done by hand: Escape-to-close,
-// body scroll lock, and real focus management (focus in on open, trap Tab within
-// the dialog, restore to the trigger on close) so aria-modal is an honest claim.
+// Mobile "all apps" bottom sheet (hidden on md+): a slide-up panel gridding the
+// active workspace's features, with the account menu pinned under them — the aside
+// (and its NavUser footer) is hidden below md, so this is a phone's only route to
+// sign in / sign out. A native <dialog> opened with showModal(), so the
+// platform supplies the top layer, the inert background, Escape-to-close, the
+// focus trap, focus restore, and the ::backdrop scrim — none of that is hand-rolled
+// here. Only the scroll lock is ours (see below). Layout: a dialog centres itself,
+// so mt-auto + w-full/max-w-none pin it to the bottom edge, and display comes from
+// `max-md:open:flex` — plain `open:flex` outranks `md:hidden` and would leak onto
+// desktop, while closed it falls through to the UA's display:none. `text-foreground`
+// is not decoration: the UA gives dialogs `color: canvastext`, which ignores our theme.
 import { useEffect, useRef } from "react";
 import { type MenuItem } from "./menu";
 import { Icon } from "./icons";
+import { NavUser } from "./nav-user";
 import { cn } from "@/lib/cn";
 
 export function MoreSheet({
@@ -25,46 +32,21 @@ export function MoreSheet({
   active: string;
   onSelect: (slug: string) => void;
 }) {
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDialogElement>(null);
 
+  // The dialog is always mounted so the ref exists the moment `open` flips.
   useEffect(() => {
-    if (!open) return;
-    const dialog = dialogRef.current;
-    const restoreTo = document.activeElement as HTMLElement | null;
-    dialog?.focus();
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-      if (e.key !== "Tab" || !dialog) return;
-      const f = dialog.querySelectorAll<HTMLElement>(
-        'button, [href], [tabindex]:not([tabindex="-1"])',
-      );
-      if (f.length === 0) return;
-      const first = f[0];
-      const last = f[f.length - 1];
-      const el = document.activeElement;
-      if (e.shiftKey && (el === first || el === dialog)) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && el === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    const d = ref.current;
+    if (!d) return;
+    if (open && !d.open) d.showModal();
+    if (!open && d.open) d.close();
+    // A modal dialog inerts the background but does NOT stop it scrolling — the
+    // one piece of modal behaviour the platform still leaves to us.
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
-      restoreTo?.focus();
     };
-  }, [open, onClose]);
-
-  if (!open) return null;
+  }, [open]);
 
   const pick = (slug: string) => {
     onSelect(slug);
@@ -72,32 +54,30 @@ export function MoreSheet({
   };
 
   return (
-    <div
-      ref={dialogRef}
-      tabIndex={-1}
-      className="fixed inset-0 z-50 outline-none md:hidden"
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={ref}
       aria-label="All apps"
+      onClose={onClose}
+      // A backdrop click lands on the dialog box itself; anything inside it doesn't.
+      onClick={(e) => {
+        if (e.target === ref.current) onClose();
+      }}
+      className="m-0 mt-auto max-h-[85dvh] w-full max-w-none flex-col rounded-t-2xl border-t border-border bg-card text-foreground pb-[calc(env(safe-area-inset-bottom)+1rem)] backdrop:bg-black/50 backdrop:backdrop-blur-sm max-md:open:flex md:hidden"
     >
-      <button
-        type="button"
-        aria-label="Close"
-        onClick={onClose}
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-      />
-      <div className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl border-t border-border bg-card pb-[calc(env(safe-area-inset-bottom)+1rem)]">
-        <div className="mx-auto mt-3 h-1 w-9 shrink-0 rounded-full bg-border" />
-        <div className="px-5 pt-3 pb-4">
-          <h2 className="text-lg font-semibold tracking-tight">All features</h2>
-          <p className="text-sm text-muted-foreground">Placeholder — project features + system.</p>
-        </div>
-        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 pb-2">
-          <SheetGroup label="Project" items={project} active={active} onSelect={pick} />
-          <SheetGroup label="System" items={system} active={active} onSelect={pick} />
-        </div>
+      <div className="mx-auto mt-3 h-1 w-9 shrink-0 rounded-full bg-border" />
+      <div className="px-5 pt-3 pb-4">
+        <h2 className="text-lg font-semibold tracking-tight">All features</h2>
+        <p className="text-sm text-muted-foreground">Placeholder — project features + system.</p>
       </div>
-    </div>
+      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 pb-2">
+        <SheetGroup label="Project" items={project} active={active} onSelect={pick} />
+        <SheetGroup label="System" items={system} active={active} onSelect={pick} />
+      </div>
+      {/* Same component the sidebar footer uses, so all three auth states stay in one place. */}
+      <div className="mt-3 shrink-0 border-t border-border px-4 pt-3">
+        <NavUser />
+      </div>
+    </dialog>
   );
 }
 

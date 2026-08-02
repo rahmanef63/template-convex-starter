@@ -1,8 +1,8 @@
 // SSOT for the OS shell's features — PER WORKSPACE. Each workspace owns its own
 // menu, so the workspace switcher swaps the sidebar / dock / breadcrumb / content
-// for real (see menuForWorkspace + app/os/os-shell.tsx). `icon` keys into
-// components/os/icons.tsx. These are generic placeholders — rename/replace them
-// (and give each workspace its real features) as you build the app out.
+// for real (see splitFeatures + app/os/os-shell.tsx). `icon` keys into
+// components/os/icons.tsx. Notes and Assistant are real features; the rest are
+// generic placeholders — rename/replace them as you build the app out.
 export type FeatureGroup = "project" | "system";
 
 export type MenuItem = {
@@ -18,8 +18,18 @@ export type MenuItem = {
 export const FAB: MenuItem = {
   slug: "assistant",
   label: "Assistant",
-  sub: "Ask anything — placeholder",
+  sub: "Claude-powered chat",
   icon: "sparkle",
+  group: "project",
+};
+
+// The one real, data-backed feature every workspace ships with — the worked
+// example of the golden path (convex/notes.ts). It leads each menu below.
+export const NOTES: MenuItem = {
+  slug: "notes",
+  label: "Notes",
+  sub: "Your notes — a real Convex feature",
+  icon: "doc",
   group: "project",
 };
 
@@ -61,7 +71,7 @@ export const WORKSPACES: Workspace[] = [
     plan: "Pro",
     icon: "sparkle",
     features: [
-      proj(1, "home"),
+      NOTES,
       proj(2, "folder"),
       proj(3, "chart"),
       proj(4, "doc"),
@@ -76,7 +86,7 @@ export const WORKSPACES: Workspace[] = [
     plan: "Free",
     icon: "folder",
     features: [
-      proj(1, "home"),
+      NOTES,
       proj(2, "folder"),
       sys("settings", "Settings", "Workspace configuration", "gear"),
     ],
@@ -87,7 +97,7 @@ export const WORKSPACES: Workspace[] = [
     plan: "Enterprise",
     icon: "chart",
     features: [
-      proj(1, "home"),
+      NOTES,
       proj(2, "folder"),
       proj(3, "chart"),
       proj(4, "doc"),
@@ -111,13 +121,3 @@ export function splitFeatures(features: MenuItem[]) {
     bySlug: Object.fromEntries(features.map((m) => [m.slug, m])) as Record<string, MenuItem>,
   };
 }
-
-// Signed-in user (sidebar footer nav-user) — placeholder. Swap for the real
-// @convex-dev/auth user (name/email from the users table) when auth is wired in.
-export type OsUser = { name: string; email: string; initials: string };
-
-export const USER: OsUser = {
-  name: "Jane Cooper",
-  email: "jane@acme.com",
-  initials: "JC",
-};

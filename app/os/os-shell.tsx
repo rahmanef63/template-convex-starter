@@ -1,11 +1,10 @@
 "use client";
 
-// Placeholder OS shell — a static template to build real screens on. No Convex,
-// no auth, no routing: a single `active` slug in state drives the sidebar, dock,
-// topbar title, and the placeholder body. Two kinds of feature (see menu.ts):
-// project features render the dashboard, system features render settings — so the
-// difference is visible. Swap the placeholder screens for real <Authenticated>
-// useQuery data as you build each feature out.
+// The OS shell — the post-login home, and the same layout logged out as a public
+// demo. No routing: one `active` slug in state drives the sidebar, dock, topbar,
+// and body; <Screen> maps that slug to what renders. Notes (Convex) and Assistant
+// (Claude) are real features; every other slug in a workspace's menu is
+// placeholder scaffolding to replace as you build the app out (menu.ts).
 import { useState } from "react";
 import {
   splitFeatures,
@@ -14,7 +13,7 @@ import {
   type Workspace,
 } from "@/components/os/menu";
 import { Icon } from "@/components/os/icons";
-import { DashboardScreen, SettingsScreen } from "@/components/os/screens";
+import { Screen } from "@/components/os/screens";
 import { OsDock } from "@/components/os/os-dock";
 import { MoreSheet } from "@/components/os/more-sheet";
 import { Topbar } from "@/components/os/topbar";
@@ -68,7 +67,14 @@ export function OsShell({
           manage={manage}
         />
         <nav aria-label="Features" className="mt-5 flex flex-1 flex-col gap-5">
-          <NavGroup label="Project" items={menu.project} active={active} onSelect={setActive} />
+          {/* The Assistant is shared by every workspace, so it sits outside menu.project:
+              the dock raises it as the FAB, the sidebar just leads the group with it. */}
+          <NavGroup
+            label="Project"
+            items={[FAB, ...menu.project]}
+            active={active}
+            onSelect={setActive}
+          />
           <NavGroup label="System" items={menu.system} active={active} onSelect={setActive} />
         </nav>
         <div className="mt-4 border-t border-border pt-3">
@@ -91,7 +97,7 @@ export function OsShell({
           <p className="truncate text-sm text-muted-foreground">{app.sub}</p>
         </header>
 
-        {isSystem ? <SettingsScreen app={app} /> : <DashboardScreen app={app} />}
+        <Screen app={app} />
 
         <div className="h-[calc(6rem+env(safe-area-inset-bottom))] md:hidden" />
       </main>
@@ -119,16 +125,14 @@ function NavGroup({
   items,
   active,
   onSelect,
-  className,
 }: {
   label: string;
   items: MenuItem[];
   active: string;
   onSelect: (slug: string) => void;
-  className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-0.5", className)}>
+    <div className="flex flex-col gap-0.5">
       <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
         {label}
       </p>

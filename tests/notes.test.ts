@@ -1,23 +1,9 @@
 // Exemplar backend tests — the pattern to copy for every new feature: prove
 // that mutations require auth and that ownership checks hold across users.
 // Tests live in tests/ (outside convex/) so deploys never bundle them.
-import { convexTest } from "convex-test";
 import { expect, test } from "vitest";
 import { api } from "../convex/_generated/api";
-import schema from "../convex/schema";
-
-const modules = import.meta.glob(["../convex/**/*.{js,ts}", "!../convex/**/*.d.ts"]);
-
-function setup() {
-  return convexTest(schema, modules);
-}
-
-// @convex-dev/auth encodes identities as "<userId>|<sessionId>" in the JWT
-// subject; getAuthUserId reads the part before the divider.
-async function signUp(t: ReturnType<typeof setup>, email: string) {
-  const userId = await t.run(async (ctx) => ctx.db.insert("users", { email }));
-  return t.withIdentity({ subject: `${userId}|test-session` });
-}
+import { setup, signUp } from "./harness";
 
 test("queries and mutations reject unauthenticated callers", async () => {
   const t = setup();

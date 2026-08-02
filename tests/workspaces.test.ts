@@ -1,20 +1,8 @@
 // Backend tests for the workspaces feature — auth required, per-user isolation,
-// and idempotent seeding. Same harness as tests/notes.test.ts.
-import { convexTest } from "convex-test";
+// and idempotent seeding.
 import { expect, test } from "vitest";
 import { api } from "../convex/_generated/api";
-import schema from "../convex/schema";
-
-const modules = import.meta.glob(["../convex/**/*.{js,ts}", "!../convex/**/*.d.ts"]);
-
-function setup() {
-  return convexTest(schema, modules);
-}
-
-async function signUp(t: ReturnType<typeof setup>, email: string) {
-  const userId = await t.run(async (ctx) => ctx.db.insert("users", { email }));
-  return t.withIdentity({ subject: `${userId}|test-session` });
-}
+import { setup, signUp } from "./harness";
 
 const SEED = [
   {

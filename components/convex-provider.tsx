@@ -1,10 +1,10 @@
 "use client";
 
-// SSG-safe Convex auth provider for Next 16 + cacheComponents:true.
+// SSG-safe Convex auth provider.
 //
-// Why not ConvexAuthNextjsProvider? Postmortem 5.2: it crashes during static
-// prerender (calls useConvexAuth() with undefined context). This client-only
-// mount + Suspense wrap pattern matches what the si-coder skill ships.
+// Why not ConvexAuthNextjsProvider? It crashes during static prerender (calls
+// useConvexAuth() with undefined context), and every page here prerenders. So
+// the auth provider mounts client-only, below a plain ConvexProvider.
 //
 // Auth actions are routed through HTTP (not WebSocket) so signIn / signOut
 // work even when the client hasn't established its WS yet.

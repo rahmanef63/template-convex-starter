@@ -12,7 +12,7 @@ const MODEL = "claude-sonnet-5";
 export const maxDuration = 30;
 
 // Only signed-in users may spend the API key. The client sends its Convex auth
-// JWT (see app/assistant/assistant-client.tsx); we verify it by asking Convex
+// JWT (see components/os/assistant-screen.tsx); we verify it by asking Convex
 // who the caller is — invalid/expired tokens fail the query.
 async function isAuthenticated(req: Request): Promise<boolean> {
   const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");

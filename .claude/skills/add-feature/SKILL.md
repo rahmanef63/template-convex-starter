@@ -7,7 +7,7 @@ description: The clean way to add a data-backed feature to this Convex + Next.js
 
 Follow these steps in order. Read `/AGENTS.md` first — it's the SSOT for all
 rules; this skill is just the recipe. Mirror `convex/notes.ts` +
-`app/dashboard/page.tsx` as the reference implementation.
+`components/os/notes-screen.tsx` as the reference implementation.
 
 ## 1. Schema (the data SSOT)
 
