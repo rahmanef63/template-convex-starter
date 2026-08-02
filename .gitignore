@@ -1,0 +1,16 @@
+node_modules
+.next
+.turbo
+out
+dist
+.env*.local
+.env
+*.tsbuildinfo
+next-env.d.ts
+# convex/_generated IS committed: `convex deploy --cmd 'next build'` pushes the
+# backend but does not write _generated to disk before the build runs, so the
+# committed copy is what `next build` resolves `@/convex/_generated/*` against.
+# `npx convex dev` / `codegen` refresh it locally; commit the change when schema
+# or functions move.
+.vercel
+.DS_Store

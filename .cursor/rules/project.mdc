@@ -1,0 +1,11 @@
+---
+description: Project rules — always apply
+alwaysApply: true
+---
+
+All project rules live in `/AGENTS.md` at the repo root. Read it and follow it
+for every change: the SSOT map, the laziness ladder, DRY/SSOT rules, Convex
+correctness (auth on every mutation, index don't scan), the no-AI-slop frontend
+rules, and the add-a-feature golden path.
+
+This file intentionally holds no rules of its own so it can't drift from AGENTS.md.
