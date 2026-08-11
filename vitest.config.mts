@@ -1,5 +1,14 @@
 import { defineConfig } from "vitest/config";
 
+// Tests are never a production run. Vitest only defaults NODE_ENV to "test" when
+// it is UNSET, and Vercel exports NODE_ENV=production for the whole build — which
+// makes react-dom load its production bundle, where `act` does not exist, so
+// every React Testing Library render dies with "React.act is not a function".
+// Set it here (before Vite resolves anything) so `bun run test` behaves the same
+// on a laptop and inside the deploy gate. Caught by scripts/build.mjs refusing a
+// red suite; the fix belongs here, not in the gate's invocation.
+process.env.NODE_ENV = "test";
+
 // Two suites, two runtimes, one `bun run test`. convex-test must run in an edge
 // VM (the real Convex runtime's constraints) and must not be pre-bundled; React
 // components need a DOM. Vitest 4 `projects` keeps them apart — a project
