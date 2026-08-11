@@ -55,6 +55,7 @@ export function ThemePicker() {
           return (
             <DropdownItem
               key={o.value}
+              current={active}
               onClick={() => {
                 setTheme(o.value);
                 close();

@@ -4,15 +4,23 @@ import { requireOwn, requireUser } from "./_shared/auth";
 
 // Every note belongs to exactly one user. Reads use the by_user index (never a
 // full scan) and every mutation re-checks ownership before touching a row.
+
+// A read has to be bounded, always: .collect() fetches every row the user owns,
+// which grows forever and eventually trips Convex's per-query read limit.
+export const MAX_NOTES = 200;
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await requireUser(ctx);
+    // ponytail: newest MAX_NOTES, no pager — the screen shows one list. When a
+    // user can realistically pass that, swap .take() for .paginate(paginationOpts)
+    // (args: { paginationOpts: paginationOptsValidator }) + usePaginatedQuery.
     return ctx.db
       .query("notes")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .order("desc")
-      .collect();
+      .take(MAX_NOTES);
   },
 });
 

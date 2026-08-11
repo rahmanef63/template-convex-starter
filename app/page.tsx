@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { IS_DEMO, CLONE_URL } from "@/lib/stage";
 
@@ -19,6 +20,15 @@ const features = [
     body: "A desktop dashboard + mobile dock placeholder at /os — grouped project & system features, ready to fill in.",
   },
 ];
+
+// Title and description come from the root layout — they describe this page
+// exactly, so copying them here would store one fact twice. The canonical does
+// not: the root deliberately declares none (it would leak to every nested
+// route), so "/" claims its own.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 export default function Home() {
   return (

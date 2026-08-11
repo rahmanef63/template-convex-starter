@@ -43,7 +43,10 @@ export function OsDock({
           >
             <Icon name={FAB.icon} className="h-6 w-6" />
           </button>
+          {/* The button above already carries this as its accessible name; left
+              exposed it would be announced a second time as orphan text. */}
           <span
+            aria-hidden
             className={cn(
               "mt-1 text-[10px] font-medium",
               fabActive ? "text-foreground" : "text-muted-foreground",
@@ -57,7 +60,9 @@ export function OsDock({
 
         <button
           type="button"
-          aria-label="All apps"
+          // The visible word is "Menu", so the accessible name has to start with
+          // it — WCAG 2.5.3, or voice control can't target this button.
+          aria-label="Menu — all apps"
           aria-current={moreActive ? "page" : undefined}
           onClick={onOpenMore}
           className={cn(

@@ -55,6 +55,9 @@ export function OsShell({
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <aside
+        // The topbar toggle points at this id with aria-controls, so a screen
+        // reader can say *what* it expands. Renaming it breaks that link.
+        id="os-sidebar"
         className={cn(
           "hidden w-64 shrink-0 flex-col border-r border-border bg-card/40 p-4",
           collapsed ? "md:hidden" : "md:flex",

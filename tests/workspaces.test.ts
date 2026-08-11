@@ -2,6 +2,7 @@
 // and idempotent seeding.
 import { expect, test } from "vitest";
 import { api } from "../convex/_generated/api";
+import { MAX_WORKSPACES } from "../convex/workspaces";
 import { setup, signUp } from "./harness";
 
 const SEED = [
@@ -46,6 +47,16 @@ test("create adds a workspace and returns its id", async () => {
   const id = await alice.mutation(api.workspaces.create, { name: "Fresh" });
   const list = await alice.query(api.workspaces.list, {});
   expect(list.find((w) => w._id === id)?.name).toBe("Fresh");
+});
+
+test("create refuses past MAX_WORKSPACES, so list stays a bounded read", async () => {
+  const t = setup();
+  const alice = await signUp(t, "alice@example.com");
+  for (let i = 0; i < MAX_WORKSPACES; i++) {
+    await alice.mutation(api.workspaces.create, { name: `W${i}` });
+  }
+  await expect(alice.mutation(api.workspaces.create, { name: "One too many" })).rejects.toThrow();
+  expect((await alice.query(api.workspaces.list, {})).length).toBe(MAX_WORKSPACES);
 });
 
 test("only the owner can rename or delete a workspace", async () => {

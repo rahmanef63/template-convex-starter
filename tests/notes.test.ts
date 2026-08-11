@@ -3,6 +3,7 @@
 // Tests live in tests/ (outside convex/) so deploys never bundle them.
 import { expect, test } from "vitest";
 import { api } from "../convex/_generated/api";
+import { MAX_NOTES } from "../convex/notes";
 import { setup, signUp } from "./harness";
 
 test("queries and mutations reject unauthenticated callers", async () => {
@@ -53,4 +54,24 @@ test("add trims input, rejects empty text, and bounds length", async () => {
   const [note] = await alice.query(api.notes.list, {});
   expect(note.text.startsWith("padded")).toBe(true);
   expect(note.text.length).toBe(500);
+});
+
+test("list is bounded — newest MAX_NOTES, never the whole table slice", async () => {
+  const t = setup();
+  const alice = await signUp(t, "alice@example.com");
+  const oldest = await alice.mutation(api.notes.add, { text: "oldest" });
+
+  // Seed straight through the db: the claim under test is the read bound, and
+  // MAX_NOTES round trips through the mutation would only make the suite slow.
+  await t.run(async (ctx) => {
+    const { userId } = (await ctx.db.get(oldest))!;
+    for (let i = 0; i < MAX_NOTES; i++) {
+      await ctx.db.insert("notes", { userId, text: `note ${i}`, done: false });
+    }
+  });
+
+  const notes = await alice.query(api.notes.list, {});
+  expect(notes.length).toBe(MAX_NOTES);
+  // Descending, so the row that falls off the page is the oldest one.
+  expect(notes.some((n) => n.text === "oldest")).toBe(false);
 });

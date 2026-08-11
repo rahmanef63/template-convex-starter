@@ -28,4 +28,18 @@ export default defineSchema({
       }),
     ),
   }).index("by_user", ["userId"]),
+  // Fixed-window counters for convex/_shared/rateLimit.ts — one row per key
+  // (`chat:<userId>`, `credentials:<email>`, …), reset in place when the window
+  // rolls over. In the DB so the budget is global, not per serverless instance.
+  // `expiresAt` (not a start + a length) is the whole window: it says when the
+  // count dies, which is both the retry-after the caller reports and the only
+  // thing the reaper needs — hence by_expiry, so rows keyed by an address a
+  // stranger chose can be swept instead of accumulating forever.
+  rateLimits: defineTable({
+    key: v.string(),
+    count: v.number(),
+    expiresAt: v.number(),
+  })
+    .index("by_key", ["key"])
+    .index("by_expiry", ["expiresAt"]),
 });

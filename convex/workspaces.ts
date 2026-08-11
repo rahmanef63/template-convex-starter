@@ -7,6 +7,11 @@ import { requireOwn, requireUser } from "./_shared/auth";
 const byUser = (ctx: QueryCtx, userId: Id<"users">) =>
   ctx.db.query("workspaces").withIndex("by_user", (q) => q.eq("userId", userId));
 
+// A read has to be bounded, always — same rule as convex/notes.ts. This one
+// doubles as the cap on `create`, so the table can't grow past what a read can
+// return and the switcher never silently hides a workspace you own.
+export const MAX_WORKSPACES = 50;
+
 // One feature (a menu entry) inside a workspace. Same shape as the frontend's
 // MenuItem — validated here because it arrives from the client during seeding.
 const featureValidator = v.object({
@@ -22,7 +27,9 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await requireUser(ctx);
-    const rows = await byUser(ctx, userId).collect();
+    // .take(), never .collect(): `create` caps the count at MAX_WORKSPACES, so
+    // this returns everything the user owns without an unbounded read.
+    const rows = await byUser(ctx, userId).take(MAX_WORKSPACES);
     return rows.sort((a, b) => a.order - b.order);
   },
 });
@@ -71,7 +78,12 @@ export const create = mutation({
   handler: async (ctx, { name }) => {
     const userId = await requireUser(ctx);
     const clean = name.trim().slice(0, 60) || "New workspace";
-    const rows = await byUser(ctx, userId).collect();
+    const rows = await byUser(ctx, userId).take(MAX_WORKSPACES);
+    // Bounded on write too, or a scripted client grows the row past what `list`
+    // can read back and the extras become invisible-but-billed.
+    if (rows.length >= MAX_WORKSPACES) {
+      throw new ConvexError({ code: "TOO_MANY", message: "Workspace limit reached." });
+    }
     const order = rows.reduce((max, w) => Math.max(max, w.order), -1) + 1;
     return await ctx.db.insert("workspaces", {
       userId,

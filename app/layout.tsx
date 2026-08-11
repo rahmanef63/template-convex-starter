@@ -15,12 +15,14 @@ export const metadata: Metadata = {
   title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
-  alternates: { canonical: "/" },
+  // No `alternates.canonical` or `openGraph.url` here: metadata merges shallowly,
+  // so a URL set at the root becomes every nested route's canonical unless that
+  // route remembers to override it — one forgotten page and a crawler reads it as
+  // a duplicate of "/". Each route declares its own (app/page.tsx, /login, /os).
   openGraph: {
     title: SITE_NAME,
     description: SITE_TAGLINE,
     siteName: SITE_NAME,
-    url: "/",
     type: "website",
   },
   // No twitter:image needed — the card falls back to app/opengraph-image.tsx.

@@ -52,7 +52,10 @@ export function WorkspaceSwitcher({
 
   return (
     <Dropdown
-      label="Switch workspace"
+      // The trigger's visible text is the workspace name, so the accessible name
+      // has to contain it (WCAG 2.5.3 Label in Name) — "Switch workspace" alone
+      // leaves voice-control users with nothing to say.
+      label={`Switch workspace — ${active.name}`}
       side="bottom"
       onClose={resetMode}
       trigger={
@@ -138,6 +141,7 @@ export function WorkspaceSwitcher({
             {workspaces.map((w) => (
               <DropdownItem
                 key={w.id}
+                current={w.id === activeId}
                 onClick={() => {
                   onChange(w.id);
                   close();

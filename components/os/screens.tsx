@@ -64,7 +64,7 @@ export function SettingsScreen({ app }: { app: MenuItem }) {
           </p>
         </div>
         <SettingRow label="Workspace name" hint="Shown across the app">
-          <input className="field max-w-56" placeholder="Acme Inc." disabled />
+          <input aria-label="Workspace name" className="field max-w-56" placeholder="Acme Inc." disabled />
         </SettingRow>
         <SettingRow label="Time zone" hint="Used for every timestamp">
           <span className="field max-w-56 text-muted-foreground">UTC · placeholder</span>

@@ -40,6 +40,11 @@ an oversight):
 - **[P2]** style & modularity — enforced by lint/typecheck/tests; if the tooling
   passes, you pass.
 
+Two comment markers carry that context in code, and both are grep targets:
+`// TODO(rr): <why + the compliant version>` for a P1 deviation, and
+`// ponytail: <ceiling + upgrade path>` for a deliberate shortcut that works now
+and names where it stops (see `convex/_shared/rateLimit.ts`, `convex/auth.ts`).
+
 ## Agent protocol (how to apply these rules)
 
 1. Before writing: check whether the change crosses a rule below — follow it even
@@ -53,7 +58,9 @@ an oversight):
 5. State which rules a change honors — e.g. "authz via `requireUser`; indexed via
    `.withIndex` (no scan)."
 6. After editing: `bun run check` (typecheck + lint + tests), then drive the flow
-   in the browser. Typecheck is not proof it works.
+   in the browser. Typecheck is not proof it works. The Vercel build runs the
+   same lint + tests as a gate before `convex deploy` (`scripts/build.mjs`), so
+   leaving them red doesn't ship — it just fails the deploy later and louder.
 7. Before shipping: walk **[`CHECKLIST.md`](CHECKLIST.md)** — the single ship
    checklist (SEO, performance, security, a11y, data, UX states, testing,
    deploy). This file says *how* to build; that one says *what must be true* when
@@ -81,10 +88,14 @@ command for this repo.
 | Data types | `convex/_generated/dataModel` (`Doc`, `Id`) | hand-written interfaces |
 | Backend logic | `convex/*.ts` (queries/mutations) | the frontend (don't reimplement) |
 | Auth check | `convex/_shared/auth.ts` (`requireUser`) | inline `getAuthUserId` copies |
+| Rate limiting | `convex/_shared/rateLimit.ts` (`rateLimit(ctx, key, {max, windowMs})`) | a `Map` in a route handler — it only limits one instance |
+| Sending email | `convex/_shared/email.ts` (`sendEmail`) | a second mail client or SDK |
+| Server error logs | `instrumentation.ts` (`onRequestError`) | `console.error` scattered in routes |
 | Routes / pages | `app/**` | — |
 | Shared UI | `components/**` (incl. `toast.tsx`, `skeleton.tsx`) | copy-pasted JSX |
 | Mutation error UX | `useToast()` + `lib/errors.ts` (`errorMessage`) | ad-hoc alert/console |
 | Backend tests | `tests/*.test.ts` (Vitest + convex-test) | — |
+| Frontend tests | `tests/ui/*.test.tsx` (Vitest + RTL + axe) | — |
 | Env / deploy | `.env.example` + `scripts/build.mjs` (`build:auto`) | — |
 | Site name / copy / brand colors | `lib/site.ts` | hardcoded strings in metadata, OG image, manifest |
 | Security headers | `next.config.ts` | per-route header hacks |
@@ -127,6 +138,24 @@ No abstraction with one caller. No config for a value that never changes. No
   validators. Trim/bound user strings before insert (see `notes.add`).
 - **[P1] Index, don't scan.** Add an index in `schema.ts` and use `.withIndex(...)`.
   `.filter()` on a table scans every row and gets slow — reserve it for tiny sets.
+- **[P1] Bound every read.** `.take(MAX_*)` (export the constant, see
+  `convex/notes.ts` → `MAX_NOTES`) or `.paginate()`. A `.collect()` on a table
+  that grows is a defect here, even when today's data is small.
+- **[P1] A new `convex/<feature>.ts` needs codegen.** `api.<feature>` doesn't
+  exist until `bun run convex:codegen` (or `bunx convex dev`) regenerates
+  `convex/_generated/`. If you can't run it in your environment, put the function
+  in an existing module (`auth.ts`, `users.ts`, `notes.ts`, `workspaces.ts`)
+  rather than shipping an import that doesn't resolve. Helpers under
+  `convex/_shared/` export no Convex functions and need no codegen.
+- **[P0] Convex-side secrets live on the Convex deployment**, set with
+  `bunx convex env set NAME value` — not in Vercel, not in `.env.local` for
+  production. A Convex action never sees Next's process env (see
+  `RESEND_API_KEY` / `AUTH_EMAIL_FROM` in `convex/_shared/email.ts`). Document
+  every one in `.env.example` with *where* it's set.
+- **[P1] A feature that needs a key stays optional.** With the key unset, the
+  template must still boot and that one feature reports itself unconfigured —
+  a typed `ConvexError({ code: "NOT_CONFIGURED" })` or an HTTP 503, never a crash
+  and never a silent no-op. The assistant and password reset both do this.
 - **[P1] Throw typed `ConvexError`** for user-facing failures:
   `throw new ConvexError({ code: "NOT_FOUND", message: "…" })`. The client reads
   `err.data.message` via `errorMessage()` (`lib/errors.ts`) and can branch on
@@ -168,16 +197,18 @@ The look should feel intentional, not templated. Avoid the generic-AI tells:
 Four steps, in order, every time:
 
 1. **Schema** — add the table/field + its index in `convex/schema.ts`.
-2. **Functions** — `query` to read (auth + `.withIndex`), `mutation` to write
-   (auth + ownership + validated args) in a new `convex/<feature>.ts`. Copy the
-   shape of `convex/notes.ts`.
+2. **Functions** — `query` to read (auth + `.withIndex` + bounded), `mutation` to
+   write (auth + ownership + validated args) in a new `convex/<feature>.ts`, then
+   `bun run convex:codegen` so `api.<feature>` exists. Copy `convex/notes.ts`.
 3. **Tests** — prove auth + ownership hold: copy `tests/notes.test.ts`
    (unauthenticated rejected, users isolated, only the owner mutates).
    `bun run test` runs offline, no deployment needed.
 4. **UI** — a page/component using `useQuery(api.<feature>.list)` /
    `useMutation(...)`. Gate private data behind `<Authenticated>`, show loading
    with `<Skeleton>`, surface mutation failures with `useToast()` +
-   `errorMessage()`.
+   `errorMessage()`. Then add a component test in `tests/ui/` that queries by
+   role + accessible name (never a snapshot) and ends with
+   `expectNoA11yViolations(container)` — `bun run test` runs both projects.
 
 Then verify it actually works (drive the flow in the browser), not just that it
 typechecks. See `README.md` → Local dev.

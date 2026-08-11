@@ -30,6 +30,9 @@ export function Topbar({
           onClick={onToggleSidebar}
           aria-label="Toggle sidebar"
           aria-expanded={!collapsed}
+          // The <aside id="os-sidebar"> in app/os/os-shell.tsx — aria-expanded
+          // alone never says which element it expands.
+          aria-controls="os-sidebar"
           className="hidden h-9 w-9 shrink-0 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-border-hover hover:text-foreground md:inline-grid"
         >
           <Icon name="panel-left" className="h-4 w-4" />

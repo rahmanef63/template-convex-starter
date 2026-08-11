@@ -102,6 +102,7 @@ function Chat() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          aria-label="Message the assistant"
           placeholder="Message the assistant…"
           className="field"
         />

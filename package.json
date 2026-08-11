@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "//engines": "node floor is 22.22.2, not 22: jsdom 30 (devDependency, the test DOM) declares engines ^22.22.2 || ^24.15.0 || >=26, and 22.0.x installs with a warning. Relax to >=22 the day jsdom goes.",
   "engines": {
     "bun": ">=1.2",
-    "node": ">=22"
+    "node": ">=22.22.2"
   },
   "scripts": {
     "dev": "next dev",
@@ -14,6 +15,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:ui": "vitest run --project ui",
     "check": "bun run typecheck && bun run lint && bun run test",
     "convex:dev": "convex dev",
     "convex:codegen": "convex codegen",
@@ -37,13 +39,19 @@
   "devDependencies": {
     "@edge-runtime/vm": "^5.0.0",
     "@tailwindcss/postcss": "^4.3.3",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "axe-core": "^4.13.0",
     "convex-test": "^0.0.54",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.12",
     "jose": "^6.2.7",
+    "jsdom": "^30.0.1",
     "postcss": "^8.5.25",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",

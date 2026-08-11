@@ -97,17 +97,21 @@ export function Dropdown({
 
 // A row: a real <button> reached by Tab. `destructive` is a named variant (not a
 // raw class override) so its colors don't collide with the base palette — we have
-// no tailwind-merge to dedupe utilities.
+// no tailwind-merge to dedupe utilities. `current` marks the selected row in a
+// set (active workspace, active theme): the check icon that shows it visually is
+// aria-hidden, so without this the state would be color-only.
 export function DropdownItem({
   onClick,
   disabled,
   destructive,
+  current,
   className,
   children,
 }: {
   onClick?: () => void;
   disabled?: boolean;
   destructive?: boolean;
+  current?: boolean;
   className?: string;
   children: ReactNode;
 }) {
@@ -116,6 +120,7 @@ export function DropdownItem({
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-current={current || undefined}
       className={cn(
         "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors",
         disabled

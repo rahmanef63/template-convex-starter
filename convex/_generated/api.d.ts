@@ -9,6 +9,8 @@
  */
 
 import type * as _shared_auth from "../_shared/auth.js";
+import type * as _shared_email from "../_shared/email.js";
+import type * as _shared_rateLimit from "../_shared/rateLimit.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as notes from "../notes.js";
@@ -23,6 +25,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   "_shared/auth": typeof _shared_auth;
+  "_shared/email": typeof _shared_email;
+  "_shared/rateLimit": typeof _shared_rateLimit;
   auth: typeof auth;
   http: typeof http;
   notes: typeof notes;

@@ -21,7 +21,9 @@ export function NotesScreen() {
   return (
     <>
       <AuthLoading>
-        <div aria-label="Loading notes" className="max-w-xl space-y-2">
+        {/* aria-label is only honoured on an element with a role — a bare <div>
+            drops it (and axe flags it as a prohibited attribute). */}
+        <div role="status" aria-label="Loading notes" className="max-w-xl space-y-2">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-2/3" />
         </div>
@@ -75,6 +77,7 @@ function Notes() {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
+          aria-label="New note"
           placeholder="Add a note…"
           className="field"
         />
@@ -106,7 +109,11 @@ function Notes() {
           >
             <button
               onClick={() => tryMutation(() => toggle({ id: n._id }))}
-              aria-label={n.done ? "Mark not done" : "Mark done"}
+              // A toggle button: stable name (unique per row, so voice control and
+              // the rotor can tell the rows apart) + state via aria-pressed. The
+              // ✓ glyph and the fill are decoration on top of that.
+              aria-label={`Mark “${n.text}” done`}
+              aria-pressed={n.done}
               className={`grid size-5 shrink-0 place-items-center rounded border text-xs transition-colors ${
                 n.done
                   ? "border-accent bg-accent text-accent-foreground"
@@ -124,7 +131,7 @@ function Notes() {
             </span>
             <button
               onClick={() => tryMutation(() => remove({ id: n._id }))}
-              aria-label="Delete note"
+              aria-label={`Delete note: ${n.text}`}
               className="text-muted-foreground transition-colors hover:text-destructive"
             >
               ✕
