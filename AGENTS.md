@@ -99,6 +99,7 @@ command for this repo.
 | Env / deploy | `.env.example` + `scripts/build.mjs` (`build:auto`) | — |
 | Site name / copy / brand colors | `lib/site.ts` | hardcoded strings in metadata, OG image, manifest |
 | Security headers | `next.config.ts` | per-route header hacks |
+| Template version | `version.json` (`lib/version.ts` reads it) | a version string typed anywhere else |
 | Ship criteria | `CHECKLIST.md` | ad-hoc "looks good to me" |
 
 `convex/_generated/` is auto-generated (committed so Vercel can typecheck). Never

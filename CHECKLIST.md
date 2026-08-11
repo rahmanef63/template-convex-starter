@@ -222,6 +222,17 @@ under them); `tests/rate-limit.test.ts` stubs `Date.now` for the same reason.
 
 - [x] One build command deploys Convex + builds Next, and refuses to push a PR
       preview onto production — `scripts/build.mjs`, `vercel.json`
+- [x] A clone can find out it's behind and pull the newer template — `version.json`,
+      `convex/update.ts`, the *Version & updates* card on `/os` → Settings, and
+      `bun run update:template` (README → Updating your clone)
+- [x] The rebuild button is owner-gated and globally capped (3/hour), because
+      signup is open — `convex/update.ts`, proven by `tests/update.test.ts`
+- [ ] Set `OWNER_EMAIL` on the Convex deployment once your site is public.
+      Without it, any signed-up stranger may press Rebuild (still capped)
+- [ ] Set `VERCEL_DEPLOY_HOOK_URL` if you want the in-app rebuild button to work;
+      it reports "no deploy hook set" until then
+- [ ] Bump `version.json` in the same commit that ships a change, or clones can
+      never tell they're behind
 - [x] Every env var is documented with where it's set — `.env.example`
 - [x] Dependency updates arrive as safe grouped PRs — `.github/dependabot.yml`
 - [ ] `NEXT_PUBLIC_CONVEX_URL` + `CONVEX_DEPLOY_KEY` are set in Vercel

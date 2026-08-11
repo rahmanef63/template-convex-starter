@@ -128,6 +128,41 @@ The boilerplate you'd otherwise bolt on at the end:
 | The deploy gate: `bun run lint` + `bun run test` run *before* `convex deploy`, so a red suite leaves the backend untouched | `scripts/build.mjs` |
 | Two test projects, one command — backend (convex-test) + component (RTL + axe) | `vitest.config.mts`, `tests/`, `tests/ui/` |
 
+## Updating your clone
+
+A fork stops receiving upstream commits the moment you create it. Two things
+close that gap:
+
+**In the app** — `/os` → **Settings** shows a *Version & updates* card: the
+version you're running (`version.json`), whether the template published a newer
+one, and a **Rebuild site** button. Optional, both set on the **Convex**
+deployment:
+
+```bash
+bunx convex env set VERCEL_DEPLOY_HOOK_URL "https://api.vercel.com/v1/integrations/deploy/…"
+bunx convex env set OWNER_EMAIL "you@example.com"
+```
+
+The hook comes from Vercel → Project → Settings → Git → Deploy Hooks. **Set
+`OWNER_EMAIL` once your site is public**: signup is open, so without it any
+signed-up stranger can spend your build minutes. A global cap of 3 rebuilds/hour
+applies either way, and the card never ships a git token — it re-deploys, it
+does not push code.
+
+**In your terminal** — the code itself comes down over git:
+
+```bash
+bun run update:template     # adds the template remote, shows what's new
+git merge template/main     # you decide; expect conflicts where you edited
+bun install && bun run check
+git push                    # Vercel rebuilds, Convex deploys with it
+```
+
+`bun run update:template` refuses to run on a dirty tree and never merges for
+you — merging into code you've since changed is a decision, not a chore.
+
+Bump `version.json` in the same commit whenever you cut a release of your own.
+
 ## Known limits (read before you rely on any of this)
 
 None of these are bugs to file — they're the edges of what the template claims.

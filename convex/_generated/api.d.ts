@@ -14,6 +14,7 @@ import type * as _shared_rateLimit from "../_shared/rateLimit.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as notes from "../notes.js";
+import type * as update from "../update.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
   notes: typeof notes;
+  update: typeof update;
   users: typeof users;
   workspaces: typeof workspaces;
 }>;

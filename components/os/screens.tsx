@@ -1,9 +1,11 @@
 // Every screen body the shell can render, picked by slug. Two are REAL features
 // (notes → convex/notes.ts, assistant → app/api/chat/route.ts); the other two are
 // static placeholders — the seam where you drop your own <Authenticated> data.
+import { Authenticated } from "convex/react";
 import { FAB, NOTES, type MenuItem } from "./menu";
 import { NotesScreen } from "./notes-screen";
 import { AssistantScreen } from "./assistant-screen";
+import { UpdateCard } from "./update-card";
 
 // Slugs come from menu.ts so the router and the nav can never disagree.
 export function Screen({ app }: { app: MenuItem }) {
@@ -56,6 +58,14 @@ export function DashboardScreen({ app }: { app: MenuItem }) {
 export function SettingsScreen({ app }: { app: MenuItem }) {
   return (
     <div className="max-w-2xl space-y-6">
+      {/* The one non-placeholder thing on this screen: a clone needs a way to
+          learn the template moved on. Signed-in only — it calls Convex. */}
+      {app.slug === "settings" && (
+        <Authenticated>
+          <UpdateCard />
+        </Authenticated>
+      )}
+
       <section className="card divide-y divide-border">
         <div className="px-6 py-4">
           <h2 className="text-sm font-semibold">{app.label}</h2>
