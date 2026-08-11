@@ -52,8 +52,16 @@ an oversight):
    at the site and call it out in the commit body.
 5. State which rules a change honors — e.g. "authz via `requireUser`; indexed via
    `.withIndex` (no scan)."
-6. After editing: `npm run typecheck` + `npm test`, then drive the flow in the
-   browser. Typecheck is not proof it works.
+6. After editing: `bun run check` (typecheck + lint + tests), then drive the flow
+   in the browser. Typecheck is not proof it works.
+7. Before shipping: walk **[`CHECKLIST.md`](CHECKLIST.md)** — the single ship
+   checklist (SEO, performance, security, a11y, data, UX states, testing,
+   deploy). This file says *how* to build; that one says *what must be true* when
+   you're done. `/ship-check` runs it.
+
+**Package manager: bun.** `bun install`, `bun run <script>`, `bunx <cli>`. There
+is no npm lockfile — don't create one, and don't hand a user an `npm`/`npx`
+command for this repo.
 
 ## Golden rules (the short list)
 
@@ -78,9 +86,12 @@ an oversight):
 | Mutation error UX | `useToast()` + `lib/errors.ts` (`errorMessage`) | ad-hoc alert/console |
 | Backend tests | `tests/*.test.ts` (Vitest + convex-test) | — |
 | Env / deploy | `.env.example` + `scripts/build.mjs` (`build:auto`) | — |
+| Site name / copy / brand colors | `lib/site.ts` | hardcoded strings in metadata, OG image, manifest |
+| Security headers | `next.config.ts` | per-route header hacks |
+| Ship criteria | `CHECKLIST.md` | ad-hoc "looks good to me" |
 
 `convex/_generated/` is auto-generated (committed so Vercel can typecheck). Never
-edit it by hand; it refreshes on `npx convex dev` / `deploy`.
+edit it by hand; it refreshes on `bunx convex dev` / `deploy`.
 
 ## The laziness ladder (before writing code)
 
@@ -161,8 +172,8 @@ Four steps, in order, every time:
    (auth + ownership + validated args) in a new `convex/<feature>.ts`. Copy the
    shape of `convex/notes.ts`.
 3. **Tests** — prove auth + ownership hold: copy `tests/notes.test.ts`
-   (unauthenticated rejected, users isolated, only the owner mutates). `npm test`
-   runs offline, no deployment needed.
+   (unauthenticated rejected, users isolated, only the owner mutates).
+   `bun run test` runs offline, no deployment needed.
 4. **UI** — a page/component using `useQuery(api.<feature>.list)` /
    `useMutation(...)`. Gate private data behind `<Authenticated>`, show loading
    with `<Skeleton>`, surface mutation failures with `useToast()` +

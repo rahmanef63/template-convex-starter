@@ -73,7 +73,7 @@ every read — never `.filter()` a growing table.
 ## 3. Tests (prove the rules hold)
 
 Copy the shape of `tests/notes.test.ts`: unauthenticated callers rejected, users
-can't see each other's rows, only the owner can mutate. `npm test` runs offline
+can't see each other's rows, only the owner can mutate. `bun run test` runs offline
 (Vitest + convex-test) — no deployment needed.
 
 ## 4. UI (typed, live, gated)
@@ -99,8 +99,10 @@ native elements + Tailwind; don't pull a UI-kit dep for one control.
 
 ## 5. Verify
 
-Run it: `npx convex dev` (one terminal) + `npm run dev` (another), then drive the
-feature in the browser. Typecheck is not proof it works.
+Run it: `bunx convex dev` (one terminal) + `bun run dev` (another), then drive
+the feature in the browser. Typecheck is not proof it works. Then walk
+`/CHECKLIST.md` for the feature you just added — at minimum its Security, UX
+states, and Testing boxes (`/ship-check` does this for you).
 
 ## Guardrails to keep in mind
 

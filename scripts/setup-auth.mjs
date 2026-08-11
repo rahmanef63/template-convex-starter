@@ -17,15 +17,15 @@ if (!process.env.CONVEX_DEPLOY_KEY) {
   process.exit(0);
 }
 
-const npx = (args, capture = false) =>
-  execFileSync("npx", args, {
+const cli = (args, capture = false) =>
+  execFileSync("bunx", args, {
     encoding: "utf8",
     stdio: capture ? ["ignore", "pipe", "ignore"] : "inherit",
   });
 
 function envGet(name) {
   try {
-    return npx(["convex", "env", "get", name], true).trim();
+    return cli(["convex", "env", "get", name], true).trim();
   } catch {
     return "";
   }
@@ -35,7 +35,7 @@ function envGet(name) {
 // error lines (which contain no secret).
 function envSet(pair, label) {
   try {
-    execFileSync("npx", ["convex", "env", "set", pair], {
+    execFileSync("bunx", ["convex", "env", "set", pair], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -58,7 +58,7 @@ if (envGet("JWT_PRIVATE_KEY")) {
 }
 
 console.log("[setup-auth] generating auth keys…");
-// Same format as `npx @convex-dev/auth` (jose RS256, newlines → spaces).
+// Same format as `bunx @convex-dev/auth` (jose RS256, newlines → spaces).
 const { generateKeyPair, exportPKCS8, exportJWK } = await import("jose");
 const keys = await generateKeyPair("RS256", { extractable: true });
 const privateKey = (await exportPKCS8(keys.privateKey)).trimEnd().replace(/\n/g, " ");
@@ -81,7 +81,7 @@ let ok = envSet(`JWT_PRIVATE_KEY=${privateKey}`, "JWT_PRIVATE_KEY");
 if (ok) {
   ok = envSet(`JWKS=${jwks}`, "JWKS");
   if (!ok) {
-    try { npx(["convex", "env", "remove", "JWT_PRIVATE_KEY"], true); } catch { /* best effort */ }
+    try { cli(["convex", "env", "remove", "JWT_PRIVATE_KEY"], true); } catch { /* best effort */ }
   }
 }
 if (ok && site) envSet(`SITE_URL=${site}`, "SITE_URL"); // non-critical

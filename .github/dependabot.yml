@@ -6,6 +6,10 @@
 # that bundled those majors is exactly what broke the build.) Other majors still
 # arrive as their own individual PRs, so one can never poison the safe batch.
 # This template deploys Vercel-only (no GitHub Actions).
+#
+# The package manager is bun; `package-ecosystem: npm` is still correct —
+# Dependabot handles bun.lock inside the npm ecosystem. There is no
+# `package-ecosystem: bun`.
 version: 2
 updates:
   - package-ecosystem: npm

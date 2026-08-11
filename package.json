@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
+    "bun": ">=1.2",
     "node": ">=22"
   },
   "scripts": {
@@ -13,9 +14,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "check": "bun run typecheck && bun run lint && bun run test",
     "convex:dev": "convex dev",
     "convex:codegen": "convex codegen",
-    "build:auto": "node scripts/build.mjs"
+    "build:auto": "bun scripts/build.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.27",

@@ -1,22 +1,37 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ConvexClientProvider } from "@/components/convex-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/toast";
-import { siteUrl } from "@/lib/site";
+import { BRAND, SITE_NAME, SITE_DESCRIPTION, SITE_TAGLINE, siteUrl } from "@/lib/site";
 import "./globals.css";
 
+// Copy + colors come from lib/site.ts so the page, the OG image, and the
+// manifest can never disagree. See CHECKLIST.md → SEO.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: "Convex Starter", template: "%s · Convex Starter" },
-  description: "Next.js + Convex, wired and ready. Set 4 env vars, deploy to Vercel, ship.",
+  title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Convex Starter",
-    description: "Full-stack starter: auth, live data, AI — already wired.",
+    title: SITE_NAME,
+    description: SITE_TAGLINE,
+    siteName: SITE_NAME,
+    url: "/",
     type: "website",
   },
+  // No twitter:image needed — the card falls back to app/opengraph-image.tsx.
+  twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_TAGLINE },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: BRAND.bg },
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

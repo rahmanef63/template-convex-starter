@@ -8,14 +8,14 @@
 //                    preview must never push its backend code to production),
 //                    or no key but NEXT_PUBLIC_CONVEX_URL is set.
 //   fail             On Vercel with neither env var — misconfiguration.
-//   plain build      Local `npm run build:auto` without Convex env.
+//   plain build      Local `bun run build:auto` without Convex env.
 //
 // To get real backend previews per PR, set a *preview* deploy key
 // (starts with "preview:") for Vercel's Preview environment. See README.
 import { execFileSync } from "node:child_process";
 
 const run = (cmd, args) => execFileSync(cmd, args, { stdio: "inherit" });
-const nextBuild = () => run("npx", ["next", "build"]);
+const nextBuild = () => run("bunx", ["next", "build"]);
 
 const key = process.env.CONVEX_DEPLOY_KEY;
 const url = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -29,8 +29,8 @@ if (key && isPreview && !key.startsWith("preview:")) {
   );
   nextBuild();
 } else if (key) {
-  run("node", ["scripts/setup-auth.mjs"]);
-  run("npx", ["convex", "deploy", "--cmd", "next build"]);
+  run("bun", ["scripts/setup-auth.mjs"]);
+  run("bunx", ["convex", "deploy", "--cmd", "next build"]);
 } else if (url) {
   console.log(
     "[build] No CONVEX_DEPLOY_KEY — building frontend against existing " +

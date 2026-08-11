@@ -90,9 +90,10 @@ function Chat() {
           </div>
         ))}
         {error && (
+          // The route answers with a plain-text reason (offline / rate-limited /
+          // signed out), which useChat surfaces as the error message.
           <p className="text-sm text-destructive">
-            Assistant unavailable. Set <code>ANTHROPIC_API_KEY</code> in your env
-            to enable it.
+            {error.message || "Assistant unavailable."}
           </p>
         )}
       </div>
