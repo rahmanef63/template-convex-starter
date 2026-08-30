@@ -85,24 +85,31 @@ export function OsShell({
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1 overflow-y-auto p-5 sm:p-7">
-        <Topbar
-          app={app}
-          workspaceName={activeWorkspace?.name ?? ""}
-          collapsed={collapsed}
-          onToggleSidebar={() => setCollapsed((v) => !v)}
-        />
-        <header className="pb-6">
-          <p className="text-xs font-medium uppercase tracking-widest text-accent">
-            {isSystem ? "System" : "Workspace"}
-          </p>
-          <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">{app.label}</h1>
-          <p className="truncate text-sm text-muted-foreground">{app.sub}</p>
-        </header>
+      <main className="min-w-0 flex-1 overflow-y-auto overscroll-contain bg-card/25 md:bg-background">
+        <div className="sticky top-0 z-30 border-b border-border bg-background/92 px-4 pt-[calc(env(safe-area-inset-top)+0.5rem)] backdrop-blur md:static md:border-b-0 md:bg-transparent md:px-7 md:pt-7 md:backdrop-blur-none">
+          <Topbar
+            app={app}
+            workspaceName={activeWorkspace?.name ?? ""}
+            collapsed={collapsed}
+            onToggleSidebar={() => setCollapsed((v) => !v)}
+          />
+        </div>
 
-        <Screen app={app} />
+        <div className="px-4 pt-5 md:px-7 md:pt-0">
+          <header className="pb-5 md:pb-6">
+            <p className="text-xs font-medium uppercase tracking-widest text-accent">
+              {isSystem ? "System" : "Workspace"}
+            </p>
+            <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">{app.label}</h1>
+            <p className="truncate text-sm text-muted-foreground">{app.sub}</p>
+          </header>
 
-        <div className="h-[calc(6rem+env(safe-area-inset-bottom))] md:hidden" />
+          <section className="-mx-4 min-h-[calc(100dvh-13rem)] rounded-t-[1.75rem] border-t border-border bg-background px-4 py-5 shadow-[0_-12px_40px_rgba(0,0,0,0.08)] md:mx-0 md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none">
+            <Screen app={app} />
+          </section>
+
+          <div className="h-[calc(5.75rem+env(safe-area-inset-bottom))] md:hidden" />
+        </div>
       </main>
 
       <OsDock

@@ -108,6 +108,19 @@ spaghetti), even if you've never coded before:
 Just open the repo in your AI tool and start describing what you want — it reads
 these rules automatically.
 
+### Svelte 5 Runes sibling blueprint
+
+Want the same Convex/SSOT discipline on Svelte instead of React? The reusable
+blueprint lives in [`docs/svelte-bun-convex/`](docs/svelte-bun-convex/):
+
+- [`AGENTS.md`](docs/svelte-bun-convex/AGENTS.md) — copy-ready AI rules with a
+  hard **Svelte 5 Runes only** contract and Svelte AI/autofixer workflow.
+- [`TECHSTACK.md`](docs/svelte-bun-convex/TECHSTACK.md) — SvelteKit + Bun +
+  `convex-svelte` + Tailwind v4 + shadcn-svelte architecture and bootstrap path.
+
+This repo remains the Next.js starter; the Svelte files are a sibling-template
+blueprint, not a second runtime mixed into this app.
+
 ## Production defaults (already wired)
 
 The boilerplate you'd otherwise bolt on at the end:

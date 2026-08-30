@@ -62,7 +62,7 @@ export function MoreSheet({
       onClick={(e) => {
         if (e.target === ref.current) onClose();
       }}
-      className="m-0 mt-auto max-h-[85dvh] w-full max-w-none flex-col rounded-t-2xl border-t border-border bg-card text-foreground pb-[calc(env(safe-area-inset-bottom)+1rem)] backdrop:bg-black/50 backdrop:backdrop-blur-sm max-md:open:flex md:hidden"
+      className="m-0 mt-auto max-h-[90dvh] w-full max-w-none flex-col rounded-t-[1.75rem] border-t border-border bg-card text-foreground pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-18px_50px_rgba(0,0,0,0.18)] backdrop:bg-black/50 backdrop:backdrop-blur-sm max-md:open:flex md:hidden"
     >
       <div className="mx-auto mt-3 h-1 w-9 shrink-0 rounded-full bg-border" />
       <div className="px-5 pt-3 pb-4">

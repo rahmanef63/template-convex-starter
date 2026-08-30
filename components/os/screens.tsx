@@ -19,10 +19,10 @@ export function DashboardScreen({ app }: { app: MenuItem }) {
   const tiles = ["Total", "Active", "Pending", "Archived"];
   const rows = ["Placeholder row one", "Placeholder row two", "Placeholder row three"];
   return (
-    <div className="space-y-6">
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="w-full space-y-4 sm:space-y-6">
+      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
         {tiles.map((t) => (
-          <div key={t} className="card p-5">
+          <div key={t} className="card min-w-0 p-4 sm:p-5">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t}</p>
             <p className="mt-2 text-3xl font-semibold tabular-nums">—</p>
             <p className="mt-1 text-xs text-muted-foreground">Placeholder metric</p>
@@ -30,7 +30,7 @@ export function DashboardScreen({ app }: { app: MenuItem }) {
         ))}
       </section>
 
-      <section className="card p-6">
+      <section className="card w-full p-4 sm:p-6">
         <div className="flex items-center justify-between pb-4">
           <h2 className="text-sm font-semibold">{app.label} — recent</h2>
           <span className="text-xs text-muted-foreground">Placeholder</span>
@@ -57,7 +57,7 @@ export function DashboardScreen({ app }: { app: MenuItem }) {
 // different from the dashboard grid, so "Settings" doesn't look like "Dashboard".
 export function SettingsScreen({ app }: { app: MenuItem }) {
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-full space-y-4 sm:space-y-6">
       {/* The one non-placeholder thing on this screen: a clone needs a way to
           learn the template moved on. Signed-in only — it calls Convex. */}
       {app.slug === "settings" && (
@@ -74,10 +74,10 @@ export function SettingsScreen({ app }: { app: MenuItem }) {
           </p>
         </div>
         <SettingRow label="Workspace name" hint="Shown across the app">
-          <input aria-label="Workspace name" className="field max-w-56" placeholder="Acme Inc." disabled />
+          <input aria-label="Workspace name" className="field w-full sm:max-w-64" placeholder="Acme Inc." disabled />
         </SettingRow>
         <SettingRow label="Time zone" hint="Used for every timestamp">
-          <span className="field max-w-56 text-muted-foreground">UTC · placeholder</span>
+          <span className="field block w-full text-muted-foreground sm:max-w-64">UTC · placeholder</span>
         </SettingRow>
       </section>
 
@@ -106,12 +106,12 @@ function SettingRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-6 py-4">
+    <div className="flex flex-col items-stretch gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
       <div className="min-w-0">
         <p className="text-sm font-medium text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground">{hint}</p>
       </div>
-      <div className="shrink-0">{children}</div>
+      <div className="w-full sm:w-auto sm:shrink-0">{children}</div>
     </div>
   );
 }

@@ -32,8 +32,9 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-20">
-      <section>
+    <main className="min-h-dvh w-full px-4 py-12 sm:px-6 sm:py-16 lg:px-10">
+      <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-7xl flex-col justify-center">
+      <section className="w-full">
         <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/[0.06] px-3 py-1 text-xs font-medium text-accent">
           <span className="size-1.5 rounded-full bg-accent" />
           Next.js 16 + Convex
@@ -63,9 +64,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="card mt-16 divide-y divide-border">
+      <section className="card mt-12 grid w-full divide-y divide-border overflow-hidden sm:grid-cols-2 sm:divide-y-0 lg:mt-16">
         {features.map((f, i) => (
-          <div key={f.title} className="flex items-start gap-5 p-5">
+          <div key={f.title} className="flex min-w-0 items-start gap-4 border-border p-5 sm:border-b sm:[&:nth-child(odd)]:border-r sm:[&:nth-last-child(-n+2)]:border-b-0 lg:p-6">
             <span className="mt-0.5 font-mono text-xs tracking-widest text-accent">
               {String(i + 1).padStart(2, "0")}
             </span>
@@ -76,6 +77,7 @@ export default function Home() {
           </div>
         ))}
       </section>
+      </div>
     </main>
   );
 }

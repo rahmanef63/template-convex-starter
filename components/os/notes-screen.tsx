@@ -23,14 +23,14 @@ export function NotesScreen() {
       <AuthLoading>
         {/* aria-label is only honoured on an element with a role — a bare <div>
             drops it (and axe flags it as a prohibited attribute). */}
-        <div role="status" aria-label="Loading notes" className="max-w-xl space-y-2">
+        <div role="status" aria-label="Loading notes" className="w-full space-y-2">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-2/3" />
         </div>
       </AuthLoading>
 
       <Unauthenticated>
-        <div className="card max-w-xl p-8 text-center">
+        <div className="card w-full p-6 text-center sm:p-8">
           <p className="text-sm text-muted-foreground">Sign in to see your notes.</p>
           <Link href="/login" className="btn-primary mt-4">
             Sign in
@@ -72,8 +72,8 @@ function Notes() {
   }
 
   return (
-    <div className="max-w-xl">
-      <form onSubmit={submit} className="flex gap-2">
+    <div className="w-full">
+      <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -81,12 +81,12 @@ function Notes() {
           placeholder="Add a note…"
           className="field"
         />
-        <button type="submit" className="btn-primary">
+        <button type="submit" className="btn-primary w-full sm:w-auto">
           Add
         </button>
       </form>
 
-      <ul className="mt-6 space-y-2">
+      <ul className="mt-5 space-y-2 sm:mt-6">
         {notes === undefined && (
           <>
             <li>

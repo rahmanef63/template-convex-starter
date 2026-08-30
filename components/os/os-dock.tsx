@@ -25,10 +25,10 @@ export function OsDock({
   const moreActive = !fabActive && !tabs.some((t) => t.slug === active);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:hidden">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_rgba(0,0,0,0.12)] backdrop-blur md:hidden">
       <nav
         aria-label="App dock"
-        className="pointer-events-auto mx-auto grid max-w-md grid-cols-5 items-end rounded-2xl border border-border bg-card/95 p-1.5 shadow-lg backdrop-blur"
+        className="pointer-events-auto grid w-full grid-cols-5 items-end px-2 pb-1 pt-2"
       >
         <DockTab item={tabs[0]} activeSlug={active} onSelect={onSelect} />
         <DockTab item={tabs[1]} activeSlug={active} onSelect={onSelect} />
@@ -39,7 +39,7 @@ export function OsDock({
             aria-label={FAB.label}
             aria-current={fabActive ? "page" : undefined}
             onClick={() => onSelect(FAB.slug)}
-            className="-mt-7 grid h-14 w-14 place-items-center rounded-full bg-accent text-accent-foreground shadow-lg ring-4 ring-background transition-transform motion-safe:active:scale-95"
+            className="-mt-7 grid h-14 w-14 place-items-center rounded-full bg-accent text-accent-foreground shadow-lg ring-4 ring-card transition-transform motion-safe:active:scale-95"
           >
             <Icon name={FAB.icon} className="h-6 w-6" />
           </button>
@@ -66,7 +66,7 @@ export function OsDock({
           aria-current={moreActive ? "page" : undefined}
           onClick={onOpenMore}
           className={cn(
-            "flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors",
+            "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors",
             moreActive ? "bg-accent/12 text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -98,7 +98,7 @@ function DockTab({
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors",
+        "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors",
         active ? "bg-accent/12 text-foreground" : "text-muted-foreground hover:text-foreground",
       )}
     >

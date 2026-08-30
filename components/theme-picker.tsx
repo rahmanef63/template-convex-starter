@@ -30,7 +30,7 @@ export function ThemePicker() {
     return (
       <span
         aria-hidden
-        className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground"
+        className="grid size-11 place-items-center rounded-xl border border-border text-muted-foreground"
       >
         <Icon name="sun" className="h-4 w-4" />
       </span>
@@ -44,7 +44,7 @@ export function ThemePicker() {
       label="Change theme"
       align="end"
       trigger={
-        <span className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-border-hover hover:text-foreground">
+        <span className="grid size-11 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-border-hover hover:text-foreground">
           <Icon name={current.icon} className="h-4 w-4" />
         </span>
       }

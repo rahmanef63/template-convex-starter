@@ -131,8 +131,8 @@ export function LoginClient() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center px-6">
-      <div className="card w-full max-w-sm p-7">
+    <main className="grid min-h-dvh w-full place-items-center bg-card/25 px-0 sm:px-6">
+      <div className="w-full border-y border-border bg-background px-5 py-8 sm:max-w-sm sm:rounded-2xl sm:border sm:bg-card sm:p-7">
         <h1 className="text-xl font-semibold tracking-tight">{copy.heading}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {state === "verify"

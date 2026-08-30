@@ -16,14 +16,14 @@ export function AssistantScreen() {
   return (
     <>
       <AuthLoading>
-        <div className="max-w-2xl space-y-3">
+        <div className="w-full space-y-3">
           <Skeleton className="h-4 w-2/3" />
           <Skeleton className="h-4 w-1/2" />
         </div>
       </AuthLoading>
 
       <Unauthenticated>
-        <div className="card max-w-2xl p-8 text-center">
+        <div className="card w-full p-6 text-center sm:p-8">
           <p className="text-sm text-muted-foreground">Sign in to use the assistant.</p>
           <Link href="/login" className="btn-primary mt-4">
             Sign in
@@ -70,10 +70,10 @@ function Chat() {
   }
 
   return (
-    <div className="flex max-w-2xl flex-col">
+    <div className="flex w-full flex-col">
       {/* The shell's <main> already scrolls, so the log gets its own bounded scroll
           instead of pushing the composer off-screen. */}
-      <div className="max-h-[60vh] space-y-4 overflow-y-auto">
+      <div className="max-h-[55dvh] w-full space-y-4 overflow-y-auto rounded-2xl border border-border bg-card/40 p-4 sm:max-h-[60vh] sm:p-5">
         {messages.length === 0 && (
           <p className="text-sm text-muted-foreground">
             Ask anything to try the Claude-powered assistant.
@@ -98,7 +98,7 @@ function Chat() {
         )}
       </div>
 
-      <form onSubmit={submit} className="mt-6 flex gap-2">
+      <form onSubmit={submit} className="mt-4 flex flex-col gap-2 sm:mt-6 sm:flex-row">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -106,7 +106,7 @@ function Chat() {
           placeholder="Message the assistant…"
           className="field"
         />
-        <button type="submit" disabled={busy || !input.trim()} className="btn-primary">
+        <button type="submit" disabled={busy || !input.trim()} className="btn-primary w-full sm:w-auto">
           {busy ? "…" : "Send"}
         </button>
       </form>

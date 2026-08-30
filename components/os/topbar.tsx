@@ -23,7 +23,7 @@ export function Topbar({
   const groupLabel = app.group === "system" ? "System" : "Project";
 
   return (
-    <div className="mb-6 flex items-center justify-between gap-3 border-b border-border pb-3">
+    <div className="flex min-h-11 items-center justify-between gap-3 pb-3 md:mb-6 md:border-b md:border-border">
       <div className="flex min-w-0 items-center gap-2">
         <button
           type="button"
@@ -33,7 +33,7 @@ export function Topbar({
           // The <aside id="os-sidebar"> in app/os/os-shell.tsx — aria-expanded
           // alone never says which element it expands.
           aria-controls="os-sidebar"
-          className="hidden h-9 w-9 shrink-0 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-border-hover hover:text-foreground md:inline-grid"
+          className="hidden size-11 shrink-0 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-border-hover hover:text-foreground md:inline-grid"
         >
           <Icon name="panel-left" className="h-4 w-4" />
         </button>
@@ -50,7 +50,7 @@ export function Topbar({
 
       <div className="flex shrink-0 items-center gap-2">
         <ThemePicker />
-        <button type="button" className="btn-ghost" aria-label="Search (placeholder)">
+        <button type="button" className="btn-ghost min-h-11 min-w-11 px-3" aria-label="Search (placeholder)">
           <Icon name="search" className="h-4 w-4" />
           <span className="hidden sm:inline">Search</span>
           <kbd className="hidden rounded border border-border px-1 text-[10px] sm:inline">⌘K</kbd>
